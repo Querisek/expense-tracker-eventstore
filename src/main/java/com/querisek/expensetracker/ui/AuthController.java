@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.application.auth;
+package com.querisek.expensetracker.ui;
 
 import com.querisek.expensetracker.infrastructure.auth.User;
 import com.querisek.expensetracker.infrastructure.auth.UserService;

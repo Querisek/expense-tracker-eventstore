@@ -16,7 +16,7 @@
           <div th:if="${param.success}" class="alert alert-success">
             Konto zostało utworzone.
           </div>
-          <form th:action="@{/register}" method="POST" th:object="${user}">
+          <form autocomplete="off" th:action="@{/register}" method="POST" th:object="${user}">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input type="email" class="form-control" id="email" th:field="*{email}" required>
