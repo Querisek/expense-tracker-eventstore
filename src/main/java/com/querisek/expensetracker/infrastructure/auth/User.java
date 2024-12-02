@@ -2,7 +2,8 @@ package com.querisek.expensetracker.infrastructure.auth;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -11,11 +12,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty
-    @Email
+    @NotBlank(message = "Adres email nie może być pusty.")
+    @Email(message = "Podaj poprawny adres email.")
     private String email;
 
-    @NotEmpty
+    @NotBlank(message = "Hasło nie może być puste.")
+    @Size(min = 8, max = 60, message = "Hasło nie zawiera minimalnej ilości znaków.")
     private String password;
 
     public User() {}
