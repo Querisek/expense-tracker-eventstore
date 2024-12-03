@@ -1,17 +1,18 @@
 package com.querisek.expensetracker.infrastructure.expense;
 
-import com.eventstore.dbclient.AppendToStreamOptions;
-import com.eventstore.dbclient.EventData;
-import com.eventstore.dbclient.EventStoreDBClient;
-import com.eventstore.dbclient.ExpectedRevision;
+import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querisek.expensetracker.domain.Expense;
 import com.querisek.expensetracker.domain.ExpenseCreatedEvent;
 import com.querisek.expensetracker.domain.ExpenseRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Repository
 public class EventStoreExpenseRepository implements ExpenseRepository {
@@ -28,11 +29,39 @@ public class EventStoreExpenseRepository implements ExpenseRepository {
         try {
             ExpenseCreatedEvent event = new ExpenseCreatedEvent(expense);
             String streamName = String.format("%s-%s", expense.getUserId(), expense.getExpenseCategory());
+            String allCategoriesStreamName = String.format("%s-allCategories", expense.getUserId());
             byte[] eventBytes = objectMapper.writeValueAsBytes(event);
             EventData eventData = EventData.builderAsJson("ExpenseCreated", eventBytes).build();
             eventStoreDBClient.appendToStream(streamName, eventData).get();
+            eventStoreDBClient.appendToStream(allCategoriesStreamName, eventData).get();
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie dodac wydatku.", e);
+        }
+    }
+
+    @Override
+    public List<ExpenseCreatedEvent> listUsersExpenses(String userId) {
+        try {
+            String allCategoriesStreamName = String.format("%s-allCategories", userId);
+            ReadStreamOptions options = ReadStreamOptions.get()
+                    .backwards()
+                    .fromEnd();
+            List<ExpenseCreatedEvent> usersExpenses = new ArrayList<>();
+            try {
+                ReadResult result = eventStoreDBClient.readStream(allCategoriesStreamName, options).get();
+                for (ResolvedEvent event : result.getEvents()) {
+                    String eventBody = new String(event.getEvent().getEventData(), StandardCharsets.UTF_8);
+                    ExpenseCreatedEvent expense = objectMapper.readValue(eventBody, ExpenseCreatedEvent.class);
+                    usersExpenses.add(expense);
+                }
+            } catch (ExecutionException e) {
+                if(e.getCause() instanceof StreamNotFoundException) {
+                    return usersExpenses;
+                }
+            }
+            return usersExpenses;
+        } catch(Exception e) {
+            throw new RuntimeException("Nie udalo sie odczytac wszystkich eventow uzytkownika.", e);
         }
     }
 }

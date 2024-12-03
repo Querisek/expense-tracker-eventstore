@@ -10,7 +10,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="#">Podsumowanie</a>
+    <a class="navbar-brand fw-bold" href="#">Aktualności</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -50,10 +50,10 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Wydatki w tym miesiącu</h6>
+            <h6 class="card-subtitle text-muted">Dzisiejsze wydatki</h6>
             <i class="bi bi-cash text-primary fs-4"></i>
           </div>
-          <h3 class="card-title mb-0">0.00 PLN</h3>
+          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
         </div>
       </div>
     </div>
@@ -61,7 +61,7 @@
       <div class="card h-100 border-0 shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Budżet miesięczny</h6>
+            <h6 class="card-subtitle text-muted">Dzisiejszy przychód</h6>
             <i class="bi bi-wallet2 text-primary fs-4"></i>
           </div>
           <h3 class="card-title mb-0">0.00 PLN</h3>
@@ -102,8 +102,14 @@
               </tr>
               </thead>
               <tbody>
-              <tr>
+              <tr th:if="${#lists.isEmpty(allUsersExpenses)}">
                 <td colspan="4" class="text-center">Brak wydatków</td>
+              </tr>
+              <tr th:each="expense : ${allUsersExpenses}">
+                <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                <td th:text="${expense.expenseCategory}">Kategoria</td>
+                <td th:text="${expense.expenseDescription}">Opis</td>
+                <td th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</td>
               </tr>
               </tbody>
             </table>
@@ -136,11 +142,12 @@
           <div class="mb-3">
             <label for="category" class="form-label">Kategoria</label>
             <select class="form-select" id="category" th:field="*{expenseCategory}" required>
-              <option value="food">Jedzenie</option>
-              <option value="transport">Transport</option>
-              <option value="health">Zdrowie</option>
-              <option value="entertainment">Rozrywka</option>
-              <option value="other">Inne</option>
+              <option value="Jedzenie">Jedzenie</option>
+              <option value="Podróże">Podróże</option>
+              <option value="Zdrowie">Zdrowie</option>
+              <option value="Rozrywka">Rozrywka</option>
+              <option value="Dom">Dom</option>
+              <option value="Inne">Inne</option>
             </select>
           </div>
           <div class="mb-3">

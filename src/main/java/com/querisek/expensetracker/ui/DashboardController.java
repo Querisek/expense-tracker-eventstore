@@ -24,6 +24,11 @@ public class DashboardController {
     public String showDashboardToUser(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("userEmail", userDetails.getUsername());
         model.addAttribute("addExpenseRequest", new AddExpenseRequest());
+        model.addAttribute("allUsersExpenses", expenseRepository.listUsersExpenses(userDetails.getUsername()));
+        double totalExpenses = expenseRepository.listUsersExpenses(userDetails.getUsername()).stream()
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        model.addAttribute("totalUsersExpenses", totalExpenses);
         return "dashboard";
     }
 
