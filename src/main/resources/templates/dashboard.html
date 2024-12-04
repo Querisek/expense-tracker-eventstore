@@ -30,10 +30,10 @@
         </li>
       </ul>
       <div class="d-flex align-items-center">
-                <span class="text-light me-3">
-                    <i class="bi bi-person-circle"></i>
-                    <span th:text="${userEmail}"></span>
-                </span>
+        <span class="text-light me-3">
+          <i class="bi bi-person-circle"></i>
+          <span th:text="${userEmail}"></span>
+        </span>
         <form th:action="@{/logout}" method="post">
           <button type="submit" class="btn btn-outline-light btn-sm">
             <i class="bi bi-box-arrow-right"></i> Wyloguj
@@ -58,115 +58,186 @@
     </div>
   </div>
   <div class="row g-4">
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Dzisiejsze wydatki</h6>
-            <i class="bi bi-cash text-primary fs-4"></i>
+    <div class="col-lg-8">
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body py-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="card-subtitle text-muted">Dzisiejsze wydatki</h6>
+                <i class="bi bi-cash text-primary fs-4"></i>
+              </div>
+              <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
+            </div>
           </div>
-          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
+        </div>
+        <div class="col-md-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body py-4">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h6 class="card-subtitle text-muted">Dzisiejszy przychód</h6>
+                <i class="bi bi-wallet2 text-primary fs-4"></i>
+              </div>
+              <h3 class="card-title mb-0">0.00 PLN</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Ostatnie wydatki</h5>
+                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+                  <i class="bi bi-plus-lg"></i> Dodaj wydatek
+                </button>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Kategoria</th>
+                    <th>Opis</th>
+                    <th>Kwota</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr th:if="${#lists.isEmpty(allUsersExpenses)}">
+                    <td colspan="4" class="text-center">Brak wydatków</td>
+                  </tr>
+                  <tr th:each="expense : ${allUsersExpenses}">
+                    <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                    <td th:text="${expense.expenseCategory}">Kategoria</td>
+                    <td th:text="${expense.expenseDescription}">Opis</td>
+                    <td th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Dzisiejszy przychód</h6>
-            <i class="bi bi-wallet2 text-primary fs-4"></i>
-          </div>
-          <h3 class="card-title mb-0">0.00 PLN</h3>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6 col-lg-4">
-      <div class="card h-100 border-0 shadow-sm">
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Wydatki wg kategorii</h5>
+            <h5 class="card-title mb-0">Wydatki w danych kategoriach</h5>
             <i class="bi bi-pie-chart text-primary fs-4"></i>
           </div>
-          <p class="text-center mt-4">Brak danych</p>
-        </div>
-      </div>
-    </div>
-    <div class="row mt-4">
-      <div class="col-md-8">
-        <div class="card border-0 shadow-sm">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="card-title mb-0">Ostatnie wydatki</h5>
-              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-                <i class="bi bi-plus-lg"></i> Dodaj wydatek
-              </button>
+          <div class="mt-3">
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Jedzenie</small>
+                <small th:text="${#numbers.formatDecimal(usersFoodByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-success" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersFoodByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersFoodByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
             </div>
-            <div class="table-responsive">
-              <table class="table table-hover">
-                <thead>
-                <tr>
-                  <th>Data</th>
-                  <th>Kategoria</th>
-                  <th>Opis</th>
-                  <th>Kwota</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(allUsersExpenses)}">
-                  <td colspan="4" class="text-center">Brak wydatków</td>
-                </tr>
-                <tr th:each="expense : ${allUsersExpenses}">
-                  <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
-                  <td th:text="${expense.expenseCategory}">Kategoria</td>
-                  <td th:text="${expense.expenseDescription}">Opis</td>
-                  <td th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</td>
-                </tr>
-                </tbody>
-              </table>
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Podróże</small>
+                <small th:text="${#numbers.formatDecimal(usersTravelsByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-info" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersTravelsByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersTravelsByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Zdrowie</small>
+                <small th:text="${#numbers.formatDecimal(usersHealthByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-danger" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersHealthByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersHealthByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Rozrywka</small>
+                <small th:text="${#numbers.formatDecimal(usersEntertainmentByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-warning" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersEntertainmentByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersEntertainmentByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Dom</small>
+                <small th:text="${#numbers.formatDecimal(usersHomeByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-primary" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersHomeByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersHomeByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div class="d-flex justify-content-between">
+                <small>Inne</small>
+                <small th:text="${#numbers.formatDecimal(usersOthersByDay, 1, 2) + ' PLN'}">0.00 PLN</small>
+              </div>
+              <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-secondary" role="progressbar"
+                     th:style="${'width: ' + (#numbers.formatDecimal((usersOthersByDay/totalUsersExpenses)*100, 1, 0)) + '%'}"
+                     th:aria-valuenow="${usersOthersByDay}" aria-valuemin="0" th:aria-valuemax="${totalUsersExpenses}"></div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="addExpenseModalLabel">Dodaj nowy wydatek</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="expenseForm" th:action="@{/expenses}" th:object="${addExpenseRequest}" method="POST">
-            <div class="mb-3">
-              <label for="category" class="form-label">Kategoria</label>
-              <select class="form-select" id="category" th:field="*{expenseCategory}" required>
-                <option value="Jedzenie">Jedzenie</option>
-                <option value="Podróże">Podróże</option>
-                <option value="Zdrowie">Zdrowie</option>
-                <option value="Rozrywka">Rozrywka</option>
-                <option value="Dom">Dom</option>
-                <option value="Inne">Inne</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="description" class="form-label">Opis</label>
-              <input type="text" class="form-control" id="description" th:field="*{expenseDescription}" required>
-            </div>
-            <div class="mb-3">
-              <label for="price" class="form-label">Kwota (PLN)</label>
-              <input type="number" class="form-control" id="price" step="0.01" min="0" th:field="*{price}" required>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-          <button type="submit" form="expenseForm" class="btn btn-primary">Zapisz</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<div class="modal fade" id="addExpenseModal" tabindex="-1" aria-labelledby="addExpenseModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addExpenseModalLabel">Dodaj nowy wydatek</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="expenseForm" th:action="@{/expenses}" th:object="${addExpenseRequest}" method="POST">
+          <div class="mb-3">
+            <label for="category" class="form-label">Kategoria</label>
+            <select class="form-select" id="category" th:field="*{expenseCategory}" required>
+              <option value="Jedzenie">Jedzenie</option>
+              <option value="Podróże">Podróże</option>
+              <option value="Zdrowie">Zdrowie</option>
+              <option value="Rozrywka">Rozrywka</option>
+              <option value="Dom">Dom</option>
+              <option value="Inne">Inne</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Opis</label>
+            <input type="text" class="form-control" id="description" th:field="*{expenseDescription}" required>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Kwota (PLN)</label>
+            <input type="number" class="form-control" id="price" step="0.01" min="0" th:field="*{price}" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        <button type="submit" form="expenseForm" class="btn btn-primary">Zapisz</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

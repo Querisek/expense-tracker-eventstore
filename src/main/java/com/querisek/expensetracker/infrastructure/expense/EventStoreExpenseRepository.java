@@ -40,15 +40,15 @@ public class EventStoreExpenseRepository implements ExpenseRepository {
     }
 
     @Override
-    public List<ExpenseCreatedEvent> listUsersExpenses(String userId) {
+    public List<ExpenseCreatedEvent> listUsersExpensesByCategory(String userId, String categoryName) {
         try {
-            String allCategoriesStreamName = String.format("%s-allCategories", userId);
+            String streamName = String.format("%s-%s", userId, categoryName);
             ReadStreamOptions options = ReadStreamOptions.get()
                     .backwards()
                     .fromEnd();
             List<ExpenseCreatedEvent> usersExpenses = new ArrayList<>();
             try {
-                ReadResult result = eventStoreDBClient.readStream(allCategoriesStreamName, options).get();
+                ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
                 for (ResolvedEvent event : result.getEvents()) {
                     String eventBody = new String(event.getEvent().getEventData(), StandardCharsets.UTF_8);
                     ExpenseCreatedEvent expense = objectMapper.readValue(eventBody, ExpenseCreatedEvent.class);

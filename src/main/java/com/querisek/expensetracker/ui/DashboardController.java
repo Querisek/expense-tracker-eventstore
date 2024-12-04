@@ -35,22 +35,51 @@ public class DashboardController {
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
         LocalDateTime startOfTheDay = selectedDate.atStartOfDay();
         LocalDateTime endOfTheDay = selectedDate.atTime(23, 59, 59);
-        List<ExpenseCreatedEvent> filteredExpensesByDate = expenseRepository.listUsersExpenses(userDetails.getUsername()).stream()
+        List<ExpenseCreatedEvent> filteredAllExpensesByDate = expenseRepository.listUsersExpensesByCategory(userDetails.getUsername(), "allCategories").stream()
                 .filter(expense -> {
                     LocalDateTime expenseDate = expense.getExpenseCreatedAt();
                     return !expenseDate.isBefore(startOfTheDay) && !expenseDate.isAfter(endOfTheDay);
                 })
                 .collect(Collectors.toList());
-
-        double totalExpenses = filteredExpensesByDate.stream()
+        double totalPriceOfUsersExpenses = filteredAllExpensesByDate.stream()
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersFoodFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Jedzenie"))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersTravelsFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Podróże"))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersHealthFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Zdrowie"))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersEntertainmentFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Rozrywka"))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersHomeFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Dom"))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+        double totalPriceOfUsersOthersFilteredByDay = filteredAllExpensesByDate.stream()
+                .filter(expense -> expense.getExpenseCategory().equals("Inne"))
                 .mapToDouble(ExpenseCreatedEvent::getPrice)
                 .sum();
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("userEmail", userDetails.getUsername());
         model.addAttribute("addExpenseRequest", new AddExpenseRequest());
-        model.addAttribute("allUsersExpenses", filteredExpensesByDate);
-        model.addAttribute("totalUsersExpenses", totalExpenses);
+        model.addAttribute("allUsersExpenses", filteredAllExpensesByDate);
+        model.addAttribute("totalUsersExpenses", totalPriceOfUsersExpenses);
+        model.addAttribute("usersFoodByDay", totalPriceOfUsersFoodFilteredByDay);
+        model.addAttribute("usersTravelsByDay", totalPriceOfUsersTravelsFilteredByDay);
+        model.addAttribute("usersHealthByDay", totalPriceOfUsersHealthFilteredByDay);
+        model.addAttribute("usersEntertainmentByDay", totalPriceOfUsersEntertainmentFilteredByDay);
+        model.addAttribute("usersHomeByDay", totalPriceOfUsersHomeFilteredByDay);
+        model.addAttribute("usersOthersByDay", totalPriceOfUsersOthersFilteredByDay);
         return "dashboard";
     }
 
