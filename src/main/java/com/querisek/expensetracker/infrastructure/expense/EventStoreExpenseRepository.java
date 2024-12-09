@@ -2,16 +2,14 @@ package com.querisek.expensetracker.infrastructure.expense;
 
 import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querisek.expensetracker.domain.Expense;
-import com.querisek.expensetracker.domain.ExpenseCreatedEvent;
-import com.querisek.expensetracker.domain.ExpenseRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.querisek.expensetracker.domain.expense.Expense;
+import com.querisek.expensetracker.domain.expense.ExpenseCreatedEvent;
+import com.querisek.expensetracker.domain.expense.ExpenseRepository;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Repository

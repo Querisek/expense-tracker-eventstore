@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain;
+package com.querisek.expensetracker.domain.expense;
 
 import java.util.List;
 

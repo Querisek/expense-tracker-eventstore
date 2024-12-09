@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain;
+package com.querisek.expensetracker.domain.expense;
 
 public class AddExpenseRequest {
     private String expenseCategory;

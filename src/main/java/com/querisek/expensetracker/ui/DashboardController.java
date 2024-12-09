@@ -1,9 +1,13 @@
 package com.querisek.expensetracker.ui;
 
-import com.querisek.expensetracker.domain.AddExpenseRequest;
-import com.querisek.expensetracker.domain.Expense;
-import com.querisek.expensetracker.domain.ExpenseCreatedEvent;
-import com.querisek.expensetracker.domain.ExpenseRepository;
+import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
+import com.querisek.expensetracker.domain.expense.Expense;
+import com.querisek.expensetracker.domain.expense.ExpenseCreatedEvent;
+import com.querisek.expensetracker.domain.expense.ExpenseRepository;
+import com.querisek.expensetracker.domain.income.AddIncomeRequest;
+import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.income.IncomeCreatedEvent;
+import com.querisek.expensetracker.domain.income.IncomeRepository;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,15 +27,18 @@ import java.util.stream.Collectors;
 @Controller
 public class DashboardController {
     private final ExpenseRepository expenseRepository;
+    private final IncomeRepository incomeRepository;
 
-    public DashboardController(ExpenseRepository expenseRepository) {
+    public DashboardController(ExpenseRepository expenseRepository, IncomeRepository incomeRepository) {
         this.expenseRepository = expenseRepository;
+        this.incomeRepository = incomeRepository;
     }
 
     @GetMapping("/")
     public String showDashboardToUser(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-            @AuthenticationPrincipal UserDetails userDetails,
-            Model model) {
+                                      @RequestParam(required = false, defaultValue = "expenses") String type,
+                                      @AuthenticationPrincipal UserDetails userDetails,
+                                      Model model) {
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
         LocalDateTime startOfTheDay = selectedDate.atStartOfDay();
         LocalDateTime endOfTheDay = selectedDate.atTime(23, 59, 59);
@@ -41,8 +48,20 @@ public class DashboardController {
                     return !expenseDate.isBefore(startOfTheDay) && !expenseDate.isAfter(endOfTheDay);
                 })
                 .collect(Collectors.toList());
+
         double totalPriceOfUsersExpenses = filteredAllExpensesByDate.stream()
                 .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+
+        List<IncomeCreatedEvent> filteredAllIncomesByDate = incomeRepository.listUsersIncomes(userDetails.getUsername()).stream()
+                .filter(income -> {
+                    LocalDateTime incomeDate = income.getIncomeCreatedAt();
+                    return !incomeDate.isBefore(startOfTheDay) && !incomeDate.isAfter(endOfTheDay);
+                })
+                .toList();
+
+        double totalWorthOfUsersDailyIncomes = filteredAllIncomesByDate.stream()
+                .mapToDouble(IncomeCreatedEvent::getPrice)
                 .sum();
 
         double totalPriceOfUsersFoodFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Jedzenie", filteredAllExpensesByDate);
@@ -63,18 +82,32 @@ public class DashboardController {
         model.addAttribute("usersEntertainmentByDay", totalPriceOfUsersEntertainmentFilteredByDay);
         model.addAttribute("usersHomeByDay", totalPriceOfUsersHomeFilteredByDay);
         model.addAttribute("usersOthersByDay", totalPriceOfUsersOthersFilteredByDay);
+        model.addAttribute("addIncomeRequest", new AddIncomeRequest());
+        model.addAttribute("allUsersDailyIncomes", filteredAllIncomesByDate);
+        model.addAttribute("totalUsersDailyIncome", totalWorthOfUsersDailyIncomes);
         return "dashboard";
     }
 
     @PostMapping("/expenses")
-    public String addExpense(@ModelAttribute AddExpenseRequest request, @AuthenticationPrincipal UserDetails userDetails) {
+    public String addExpense(@ModelAttribute AddExpenseRequest expenseRequest, @AuthenticationPrincipal UserDetails userDetails) {
         Expense expense = new Expense(
                 userDetails.getUsername(),
-                request.getExpenseCategory(),
-                request.getExpenseDescription(),
-                request.getPrice()
+                expenseRequest.getExpenseCategory(),
+                expenseRequest.getExpenseDescription(),
+                expenseRequest.getPrice()
         );
         expenseRepository.addExpense(expense);
+        return "redirect:/?success";
+    }
+
+    @PostMapping("/incomes")
+    public String addIncome(@ModelAttribute AddIncomeRequest incomeRequest, @AuthenticationPrincipal UserDetails userDetails) {
+        Income income = new Income(
+                userDetails.getUsername(),
+                incomeRequest.getIncomeDescription(),
+                incomeRequest.getPrice()
+        );
+        incomeRepository.addIncome(income);
         return "redirect:/?success";
     }
 }

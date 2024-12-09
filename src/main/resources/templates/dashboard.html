@@ -78,7 +78,7 @@
                 <h6 class="card-subtitle text-muted">Dzisiejszy przychód</h6>
                 <i class="bi bi-wallet2 text-primary fs-4"></i>
               </div>
-              <h3 class="card-title mb-0">0.00 PLN</h3>
+              <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersDailyIncome, 1, 2) + ' PLN'}">0.00 PLN</h3>
             </div>
           </div>
         </div>
@@ -88,10 +88,28 @@
           <div class="card border-0 shadow-sm">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title mb-0">Ostatnie wydatki</h5>
-                <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-                  <i class="bi bi-plus-lg"></i> Dodaj wydatek
-                </button>
+                <div class="d-flex align-items-center gap-3">
+                <h5 class="card-title mb-0">Dzisiejsza historia transakcji</h5>
+                  <form th:action="@{/}" method="GET" class="d-flex align-items-center">
+                    <input type="hidden" name="date" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}">
+                    <div class="btn-group" role="group">
+                      <input type="radio" class="btn-check" name="type" id="expenses" value="expenses"
+                             th:checked="${param.type == null || param.type[0] == 'expenses'}" onchange="this.form.submit()" autocomplete="off">
+                      <label class="btn btn-outline-primary btn-sm" for="expenses">Wydatki</label>
+                      <input type="radio" class="btn-check" name="type" id="incomes" value="incomes"
+                             th:checked="${param.type != null && param.type[0] == 'incomes'}" onchange="this.form.submit()" autocomplete="off">
+                      <label class="btn btn-outline-primary btn-sm" for="incomes">Przychody</label>
+                    </div>
+                  </form>
+                </div>
+                <div class="d-flex gap-2">
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
+                    <i class="bi bi-plus-lg"></i> Dodaj wydatek
+                  </button>
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
+                    <i class="bi bi-plus-lg"></i> Dodaj przychód
+                  </button>
+                </div>
               </div>
               <div class="table-responsive">
                 <table class="table table-hover">
@@ -104,15 +122,28 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <tr th:if="${#lists.isEmpty(allUsersExpenses)}">
-                    <td colspan="4" class="text-center">Brak wydatków</td>
-                  </tr>
-                  <tr th:each="expense : ${allUsersExpenses}">
-                    <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
-                    <td th:text="${expense.expenseCategory}">Kategoria</td>
-                    <td th:text="${expense.expenseDescription}">Opis</td>
-                    <td th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</td>
-                  </tr>
+                  <th:block th:if="${param.type == null || param.type[0] == 'expenses'}">
+                    <tr th:if="${#lists.isEmpty(allUsersExpenses)}">
+                      <td colspan="4" class="text-center">Brak wydatków</td>
+                    </tr>
+                    <tr th:each="expense : ${allUsersExpenses}">
+                      <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                      <td th:text="${expense.expenseCategory}">Kategoria</td>
+                      <td th:text="${expense.expenseDescription}">Opis</td>
+                      <td th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</td>
+                    </tr>
+                  </th:block>
+                  <th:block th:if="${param.type != null && param.type[0] == 'incomes'}">
+                    <tr th:if="${#lists.isEmpty(allUsersDailyIncomes)}">
+                      <td colspan="4" class="text-center">Brak przychodów</td>
+                    </tr>
+                    <tr th:each="income : ${allUsersDailyIncomes}">
+                      <td th:text="${#temporals.format(income.incomeCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                      <td>Przychód</td>
+                      <td th:text="${income.incomeDescription}">Opis</td>
+                      <td th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</td>
+                    </tr>
+                  </th:block>
                   </tbody>
                 </table>
               </div>
@@ -233,7 +264,33 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
-        <button type="submit" form="expenseForm" class="btn btn-primary">Zapisz</button>
+        <button type="submit" form="expenseForm" class="btn btn-primary">Dodaj</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="addIncomeModal" tabindex="-1" aria-labelledby="addIncomeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addIncomeModalLabel">Dodaj nowy przychód</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="incomeForm" th:action="@{/incomes}" th:object="${addIncomeRequest}" method="POST">
+          <div class="mb-3">
+            <label for="incomeDescription" class="form-label">Opis</label>
+            <input type="text" class="form-control" id="incomeDescription" th:field="*{incomeDescription}" required>
+          </div>
+          <div class="mb-3">
+            <label for="incomePrice" class="form-label">Kwota (PLN)</label>
+            <input type="number" class="form-control" id="incomePrice" step="0.01" min="0" th:field="*{price}" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        <button type="submit" form="incomeForm" class="btn btn-primary">Dodaj</button>
       </div>
     </div>
   </div>
