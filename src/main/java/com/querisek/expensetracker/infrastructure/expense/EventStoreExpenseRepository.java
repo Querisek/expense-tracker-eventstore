@@ -64,4 +64,12 @@ public class EventStoreExpenseRepository implements ExpenseRepository {
             throw new RuntimeException("Nie udalo sie odczytac wszystkich eventow uzytkownika.", e);
         }
     }
+
+    @Override
+    public double getTotalPriceOfCategoryByDay(String category, List<ExpenseCreatedEvent> allExpensesByDay) {
+        return allExpensesByDay.stream()
+                .filter(expense -> expense.getExpenseCategory().equals(category))
+                .mapToDouble(ExpenseCreatedEvent::getPrice)
+                .sum();
+    }
 }
