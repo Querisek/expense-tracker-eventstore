@@ -150,7 +150,16 @@
                       <td th:text="${#temporals.format(income.incomeCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
                       <td>Przychód</td>
                       <td th:text="${income.incomeDescription}">Opis</td>
-                      <td th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</td>
+                      <td>
+                        <div class="d-flex justify-content-between align-items-center">
+                          <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</span>
+                          <a th:href="@{/incomes/delete/{id}(id=${income.incomeId})}"
+                             class="btn btn-sm btn-outline-danger"
+                             onclick="return confirm('Czy na pewno chcesz usunąć ten przychód?')">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        </div>
+                      </td>
                     </tr>
                   </th:block>
                   </tbody>

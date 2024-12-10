@@ -127,4 +127,21 @@ public class DashboardController {
         expenseRepository.deleteExpense(expense);
         return "redirect:/?success";
     }
+
+    @GetMapping("/incomes/delete/{incomeId}")
+    public String deleteIncome(@PathVariable UUID incomeId, @AuthenticationPrincipal UserDetails userDetails) {
+        List<IncomeCreatedEvent> allIncomes = incomeRepository.listUsersIncomes(userDetails.getUsername());
+        IncomeCreatedEvent incomeToDelete = allIncomes.stream()
+                .filter(e -> e.getIncomeId().equals(incomeId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Wybrany wydatek nie istnieje"));
+        Income income = new Income(
+                incomeToDelete.getIncomeId(),
+                incomeToDelete.getUserId(),
+                incomeToDelete.getIncomeDescription(),
+                incomeToDelete.getPrice()
+        );
+        incomeRepository.deleteIncome(income);
+        return "redirect:/?success";
+    }
 }

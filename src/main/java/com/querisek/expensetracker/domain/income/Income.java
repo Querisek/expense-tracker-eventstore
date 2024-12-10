@@ -18,6 +18,14 @@ public class Income {
         this.incomeCreatedAt = LocalDateTime.now();
     }
 
+    public Income(UUID incomeId, String userId, String incomeDescription, double price) {
+        this.incomeId = incomeId;
+        this.userId = userId;
+        this.incomeDescription = incomeDescription;
+        this.price = price;
+        this.incomeCreatedAt = LocalDateTime.now();
+    }
+
     public UUID getIncomeId() {
         return incomeId;
     }
