@@ -102,9 +102,9 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</span>
                       <a th:href="@{/expenses/delete/{id}(id=${expense.expenseId})}"
-                         class="btn btn-sm btn-outline-danger"
+                         class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
-                        <i class="bi bi-trash"></i>
+                        <i class="bi bi-x-square"></i>
                       </a>
                     </div>
                   </td>
@@ -122,9 +122,9 @@
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</span>
                       <a th:href="@{/incomes/delete/{id}(id=${income.incomeId})}"
-                         class="btn btn-sm btn-outline-danger"
+                         class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten przychód?')">
-                        <i class="bi bi-trash"></i>
+                        <i class="bi bi-x-square"></i>
                       </a>
                     </div>
                   </td>
