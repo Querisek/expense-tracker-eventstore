@@ -20,6 +20,15 @@ public class Expense {
         this.expenseCreatedAt = LocalDateTime.now();
     }
 
+    public Expense(UUID expenseId, String userId, String expenseCategory, String expenseDescription, double price) {
+        this.expenseId = expenseId;
+        this.userId = userId;
+        this.expenseCategory = expenseCategory;
+        this.expenseDescription = expenseDescription;
+        this.price = price;
+        this.expenseCreatedAt = LocalDateTime.now();
+    }
+
     public UUID getExpenseId() {
         return expenseId;
     }

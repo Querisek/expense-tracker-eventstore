@@ -10,18 +10,17 @@ import com.querisek.expensetracker.domain.income.IncomeCreatedEvent;
 import com.querisek.expensetracker.domain.income.IncomeRepository;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -108,6 +107,24 @@ public class DashboardController {
                 incomeRequest.getPrice()
         );
         incomeRepository.addIncome(income);
+        return "redirect:/?success";
+    }
+
+    @GetMapping("/expenses/delete/{expenseId}")
+    public String deleteExpense(@PathVariable UUID expenseId, @AuthenticationPrincipal UserDetails userDetails) {
+        List<ExpenseCreatedEvent> allExpenses = expenseRepository.listUsersExpensesByCategory(userDetails.getUsername(), "allCategories");
+        ExpenseCreatedEvent expenseToDelete = allExpenses.stream()
+                .filter(e -> e.getExpenseId().equals(expenseId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Wybrany wydatek nie istnieje"));
+        Expense expense = new Expense(
+                expenseToDelete.getExpenseId(),
+                expenseToDelete.getUserId(),
+                expenseToDelete.getExpenseCategory(),
+                expenseToDelete.getExpenseDescription(),
+                expenseToDelete.getPrice()
+        );
+        expenseRepository.deleteExpense(expense);
         return "redirect:/?success";
     }
 }
