@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -76,6 +77,7 @@ public class EventStoreExpenseRepository implements ExpenseRepository {
                         usersExpenses.removeIf(expense -> expense.getExpenseId().equals(deletedExpense.getExpenseId()));
                     }
                 }
+                Collections.reverse(usersExpenses);
             } catch (ExecutionException e) {
                 if(e.getCause() instanceof StreamNotFoundException) {
                     return usersExpenses;

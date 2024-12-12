@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -74,6 +75,7 @@ public class EventStoreIncomeRepository implements IncomeRepository {
                         usersIncomes.removeIf(expense -> expense.getIncomeId().equals(deletedIncome.getIncomeId()));
                     }
                 }
+                Collections.reverse(usersIncomes);
             } catch (ExecutionException e) {
                 if(e.getCause() instanceof StreamNotFoundException) {
                     return usersIncomes;
