@@ -3,12 +3,15 @@ package com.querisek.expensetracker.ui;
 import com.querisek.expensetracker.infrastructure.auth.User;
 import com.querisek.expensetracker.infrastructure.auth.UserService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class AuthController {
@@ -40,5 +43,22 @@ public class AuthController {
     @GetMapping("/login")
     public String userLogin() {
         return "login";
+    }
+
+    @PostMapping("/passwordChange")
+    public String changeUsersPassword(@RequestParam String currentPassword,
+                                      @RequestParam String newPassword,
+                                      @RequestParam String confirmNewPassword,
+                                      @AuthenticationPrincipal UserDetails userDetails,
+                                      Model model) {
+        if(!newPassword.equals(confirmNewPassword)) {
+            return "redirect:/?passwordDoesNotMatch";
+        }
+        boolean passwordChange = userService.changeUsersPassword(userDetails.getUsername(), currentPassword, newPassword);
+        if(passwordChange) {
+            return "redirect:/?passwordChangedSuccessfully";
+        } else {
+            return "redirect:/?wrongPassword";
+        }
     }
 }

@@ -27,7 +27,7 @@
         </li>
       </ul>
       <div class="d-flex align-items-center">
-        <span class="text-light me-3">
+        <span class="text-light me-3" data-bs-toggle="modal" data-bs-target="#changePasswordModal" style="cursor: pointer;">
           <i class="bi bi-person-circle"></i>
           <span th:text="${userEmail}"></span>
         </span>
@@ -43,6 +43,18 @@
 <div class="container py-4">
   <div class="row mb-4">
     <div class="col-md-4">
+      <div th:if="${param.passwordChangedSuccessfully}" class="alert alert-success alert-dismissible fade show" role="alert">
+        Pomyślnie zmieniono hasło.
+        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <div th:if="${param.passwordDoesNotMatch}" class="alert alert-warning alert-dismissible fade show" role="alert">
+        Podane hasła nie są takie same.
+        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+      </div>
+      <div th:if="${param.wrongPassword}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        Podano złe hasło lub nowe hasło zawiera mniej niż 8 znaków.
+        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+      </div>
       <form th:action="@{/}" method="GET">
         <div class="d-flex flex-column">
           <label for="datePicker" class="form-label">Zmień datę:</label>
@@ -61,7 +73,7 @@
           <div class="card border-0 shadow-sm">
             <div class="card-body py-4">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="card-subtitle text-muted">Dzisiejsze wydatki</h6>
+                <h6 class="card-subtitle text-muted">Wydatki w danym dniu</h6>
                 <i class="bi bi-cash text-primary fs-4"></i>
               </div>
               <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
@@ -72,7 +84,7 @@
           <div class="card border-0 shadow-sm">
             <div class="card-body py-4">
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="card-subtitle text-muted">Dzisiejszy przychód</h6>
+                <h6 class="card-subtitle text-muted">Przychód w danym dniu</h6>
                 <i class="bi bi-wallet2 text-primary fs-4"></i>
               </div>
               <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalUsersDailyIncome, 1, 2) + ' PLN'}">0.00 PLN</h3>
@@ -86,7 +98,7 @@
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-center mb-3">
                 <div class="d-flex align-items-center gap-3">
-                <h5 class="card-title mb-0">Dzisiejsza historia finansów</h5>
+                <h5 class="card-title mb-0">Historia finansów dnia</h5>
                   <form th:action="@{/}" method="GET" class="d-flex align-items-center">
                     <input type="hidden" name="date" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}">
                     <div class="btn-group" role="group">
@@ -324,6 +336,36 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
         <button type="submit" form="incomeForm" class="btn btn-primary">Dodaj</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel">Zmień hasło</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="changePasswordForm" th:action="@{/passwordChange}" method="POST">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Obecne hasło</label>
+            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nowe hasło</label>
+            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmNewPassword" class="form-label">Potwierdź nowe hasło</label>
+            <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        <button type="submit" form="changePasswordForm" class="btn btn-primary">Zmień hasło</button>
       </div>
     </div>
   </div>

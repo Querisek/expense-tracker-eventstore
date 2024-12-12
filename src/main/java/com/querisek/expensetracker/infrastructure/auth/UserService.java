@@ -29,6 +29,19 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
+    @Transactional
+    public boolean changeUsersPassword(String email, String currentPassword, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if(user != null && passwordEncoder.matches(currentPassword, user.getPassword())) {
+            if(newPassword.length() >= 8) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);

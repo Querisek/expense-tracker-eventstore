@@ -27,7 +27,7 @@
         </li>
       </ul>
       <div class="d-flex align-items-center">
-        <span class="text-light me-3">
+        <span class="text-light me-3" data-bs-toggle="modal" data-bs-target="#changePasswordModal" style="cursor: pointer;">
           <i class="bi bi-person-circle"></i>
           <span th:text="${userEmail}"></span>
         </span>
@@ -233,6 +233,36 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="changePasswordModalLabel">Zmień hasło</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="changePasswordForm" th:action="@{/passwordChange}" method="POST">
+          <div class="mb-3">
+            <label for="currentPassword" class="form-label">Obecne hasło</label>
+            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="newPassword" class="form-label">Nowe hasło</label>
+            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+          </div>
+          <div class="mb-3">
+            <label for="confirmNewPassword" class="form-label">Potwierdź nowe hasło</label>
+            <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+        <button type="submit" form="changePasswordForm" class="btn btn-primary">Zmień hasło</button>
       </div>
     </div>
   </div>
