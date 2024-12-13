@@ -1,6 +1,8 @@
 package com.querisek.expensetracker.domain.expense;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Expense {
@@ -9,15 +11,15 @@ public class Expense {
     private final String expenseCategory;
     private final String expenseDescription;
     private final double price;
-    private final LocalDateTime expenseCreatedAt;
+    private final LocalDate expenseCreatedAt;
 
-    public Expense(String userId, String expenseCategory, String expenseDescription, double price) {
+    public Expense(String userId, String expenseCategory, String expenseDescription, double price, LocalDate expenseCreatedAt) {
         this.expenseId = UUID.randomUUID();
         this.userId = userId;
         this.expenseCategory = expenseCategory;
         this.expenseDescription = expenseDescription;
         this.price = price;
-        this.expenseCreatedAt = LocalDateTime.now();
+        this.expenseCreatedAt = Objects.requireNonNullElseGet(expenseCreatedAt, LocalDate::now);
     }
 
     public Expense(UUID expenseId, String userId, String expenseCategory, String expenseDescription, double price) {
@@ -26,7 +28,7 @@ public class Expense {
         this.expenseCategory = expenseCategory;
         this.expenseDescription = expenseDescription;
         this.price = price;
-        this.expenseCreatedAt = LocalDateTime.now();
+        this.expenseCreatedAt = LocalDate.now();
     }
 
     public UUID getExpenseId() {
@@ -49,7 +51,7 @@ public class Expense {
         return price;
     }
 
-    public LocalDateTime getExpenseCreatedAt() {
+    public LocalDate getExpenseCreatedAt() {
         return expenseCreatedAt;
     }
 }

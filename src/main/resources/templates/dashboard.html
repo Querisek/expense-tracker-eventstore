@@ -136,7 +136,7 @@
                       <td colspan="4" class="text-center">Brak wydatków</td>
                     </tr>
                     <tr th:each="expense : ${allUsersExpenses}">
-                      <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                      <td th:text="${#temporals.format(expense.expenseCreatedAt, 'dd-MM-yyyy')}">Data</td>
                       <td th:text="${expense.expenseCategory}">Kategoria</td>
                       <td th:text="${expense.expenseDescription}">Opis</td>
                       <td>
@@ -156,7 +156,7 @@
                       <td colspan="4" class="text-center">Brak przychodów</td>
                     </tr>
                     <tr th:each="income : ${allUsersDailyIncomes}">
-                      <td th:text="${#temporals.format(income.incomeCreatedAt, 'dd-MM-yyyy HH:mm')}">Data</td>
+                      <td th:text="${#temporals.format(income.incomeCreatedAt, 'dd-MM-yyyy')}">Data</td>
                       <td>Przychód</td>
                       <td th:text="${income.incomeDescription}">Opis</td>
                       <td>
@@ -305,6 +305,10 @@
             <label for="price" class="form-label">Kwota (PLN)</label>
             <input type="number" class="form-control" id="price" step="0.01" min="0" th:field="*{price}" required>
           </div>
+          <div class="mb-3">
+            <label for="expenseDate" class="form-label">Data wydatku</label>
+            <input type="date" class="form-control" id="expenseDate" th:field="*{expenseCreatedAt}" th:value="${selectedExpenseDate}" required>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
@@ -330,6 +334,10 @@
           <div class="mb-3">
             <label for="incomePrice" class="form-label">Kwota (PLN)</label>
             <input type="number" class="form-control" id="incomePrice" step="0.01" min="0" th:field="*{price}" required>
+          </div>
+          <div class="mb-3">
+            <label for="incomeDate" class="form-label">Data wydatku</label>
+            <input type="date" class="form-control" id="incomeDate" th:field="*{incomeCreatedAt}" th:value="${selectedIncomeDate}" required>
           </div>
         </form>
       </div>

@@ -42,10 +42,7 @@ public class DashboardController {
         LocalDateTime startOfTheDay = selectedDate.atStartOfDay();
         LocalDateTime endOfTheDay = selectedDate.atTime(23, 59, 59);
         List<ExpenseCreatedEvent> filteredAllExpensesByDate = expenseRepository.listUsersExpensesByCategory(userDetails.getUsername(), "allCategories").stream()
-                .filter(expense -> {
-                    LocalDateTime expenseDate = expense.getExpenseCreatedAt();
-                    return !expenseDate.isBefore(startOfTheDay) && !expenseDate.isAfter(endOfTheDay);
-                })
+                .filter(expense -> expense.getExpenseCreatedAt().equals(selectedDate))
                 .collect(Collectors.toList());
 
         double totalPriceOfUsersExpenses = filteredAllExpensesByDate.stream()
@@ -53,10 +50,7 @@ public class DashboardController {
                 .sum();
 
         List<IncomeCreatedEvent> filteredAllIncomesByDate = incomeRepository.listUsersIncomes(userDetails.getUsername()).stream()
-                .filter(income -> {
-                    LocalDateTime incomeDate = income.getIncomeCreatedAt();
-                    return !incomeDate.isBefore(startOfTheDay) && !incomeDate.isAfter(endOfTheDay);
-                })
+                .filter(income -> income.getIncomeCreatedAt().equals(selectedDate))
                 .toList();
 
         double totalWorthOfUsersDailyIncomes = filteredAllIncomesByDate.stream()

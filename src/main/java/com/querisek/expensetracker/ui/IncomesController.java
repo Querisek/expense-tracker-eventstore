@@ -28,7 +28,8 @@ public class IncomesController {
         Income income = new Income(
                 userDetails.getUsername(),
                 incomeRequest.getIncomeDescription(),
-                incomeRequest.getPrice()
+                incomeRequest.getPrice(),
+                incomeRequest.getIncomeCreatedAt()
         );
         incomeRepository.addIncome(income);
         if(httpRequest.getHeader("Referer") != null) {

@@ -1,9 +1,13 @@
 package com.querisek.expensetracker.domain.expense;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class AddExpenseRequest {
     private String expenseCategory;
     private String expenseDescription;
     private double price;
+    private LocalDate expenseCreatedAt;
 
     public AddExpenseRequest() {}
 
@@ -35,5 +39,13 @@ public class AddExpenseRequest {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public LocalDate getExpenseCreatedAt() {
+        return expenseCreatedAt;
+    }
+
+    public void setExpenseCreatedAt(LocalDate expenseCreatedAt) {
+        this.expenseCreatedAt = expenseCreatedAt;
     }
 }

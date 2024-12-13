@@ -1,12 +1,13 @@
 package com.querisek.expensetracker.domain.income;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class IncomeDeletedEvent {
     private UUID incomeId;
     private String userId;
-    private LocalDateTime incomeDeletedAt;
+    private LocalDate incomeDeletedAt;
 
     public IncomeDeletedEvent() {}
 
@@ -32,11 +33,11 @@ public class IncomeDeletedEvent {
         this.userId = userId;
     }
 
-    public LocalDateTime getIncomeDeletedAt() {
+    public LocalDate getIncomeDeletedAt() {
         return incomeDeletedAt;
     }
 
-    public void setIncomeDeletedAt(LocalDateTime incomeDeletedAt) {
+    public void setIncomeDeletedAt(LocalDate incomeDeletedAt) {
         this.incomeDeletedAt = incomeDeletedAt;
     }
 }

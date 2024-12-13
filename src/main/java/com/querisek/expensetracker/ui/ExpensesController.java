@@ -58,7 +58,8 @@ public class ExpensesController {
                 userDetails.getUsername(),
                 expenseRequest.getExpenseCategory(),
                 expenseRequest.getExpenseDescription(),
-                expenseRequest.getPrice()
+                expenseRequest.getPrice(),
+                expenseRequest.getExpenseCreatedAt()
         );
         expenseRepository.addExpense(expense);
         if(httpRequest.getHeader("Referer") != null) {

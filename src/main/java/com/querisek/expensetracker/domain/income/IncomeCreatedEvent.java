@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.domain.income;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -8,7 +9,7 @@ public class IncomeCreatedEvent {
     private String userId;
     private String incomeDescription;
     private double price;
-    private LocalDateTime incomeCreatedAt;
+    private LocalDate incomeCreatedAt;
 
     public IncomeCreatedEvent() {}
 
@@ -52,11 +53,11 @@ public class IncomeCreatedEvent {
         this.price = price;
     }
 
-    public LocalDateTime getIncomeCreatedAt() {
+    public LocalDate getIncomeCreatedAt() {
         return incomeCreatedAt;
     }
 
-    public void setIncomeCreatedAt(LocalDateTime incomeCreatedAt) {
+    public void setIncomeCreatedAt(LocalDate incomeCreatedAt) {
         this.incomeCreatedAt = incomeCreatedAt;
     }
 }

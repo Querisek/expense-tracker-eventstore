@@ -1,19 +1,20 @@
 package com.querisek.expensetracker.domain.expense;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class ExpenseDeletedEvent {
     private UUID expenseId;
     private String userId;
-    private LocalDateTime expenseDeletedAt;
+    private LocalDate expenseDeletedAt;
 
     public ExpenseDeletedEvent() {}
 
     public ExpenseDeletedEvent(Expense expense) {
         this.expenseId = expense.getExpenseId();
         this.userId = expense.getUserId();
-        this.expenseDeletedAt = LocalDateTime.now();
+        this.expenseDeletedAt = LocalDate.now();
     }
 
     public UUID getExpenseId() {
@@ -32,11 +33,11 @@ public class ExpenseDeletedEvent {
         this.userId = userId;
     }
 
-    public LocalDateTime getExpenseRemovedAt() {
+    public LocalDate getExpenseRemovedAt() {
         return expenseDeletedAt;
     }
 
-    public void setExpenseRemovedAt(LocalDateTime expenseRemovedAt) {
+    public void setExpenseRemovedAt(LocalDate expenseRemovedAt) {
         this.expenseDeletedAt = expenseRemovedAt;
     }
 }
