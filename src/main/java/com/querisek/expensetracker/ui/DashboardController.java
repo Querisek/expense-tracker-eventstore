@@ -1,83 +1,75 @@
 package com.querisek.expensetracker.ui;
 
-import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
 import com.querisek.expensetracker.domain.expense.Expense;
-import com.querisek.expensetracker.domain.expense.ExpenseCreatedEvent;
-import com.querisek.expensetracker.domain.expense.ExpenseRepository;
-import com.querisek.expensetracker.domain.income.AddIncomeRequest;
 import com.querisek.expensetracker.domain.income.Income;
-import com.querisek.expensetracker.domain.income.IncomeCreatedEvent;
-import com.querisek.expensetracker.domain.income.IncomeRepository;
+import com.querisek.expensetracker.domain.Transaction;
+import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
+
 
 @Controller
 public class DashboardController {
-    private final ExpenseRepository expenseRepository;
-    private final IncomeRepository incomeRepository;
+    private final FinancialAccountRepository financialAccountRepository;
 
-    public DashboardController(ExpenseRepository expenseRepository, IncomeRepository incomeRepository) {
-        this.expenseRepository = expenseRepository;
-        this.incomeRepository = incomeRepository;
+    public DashboardController(FinancialAccountRepository financialAccountRepository) {
+        this.financialAccountRepository = financialAccountRepository;
     }
 
     @GetMapping("/")
-    public String showDashboardToUser(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                      @RequestParam(required = false, defaultValue = "expenses") String type,
-                                      @AuthenticationPrincipal UserDetails userDetails,
-                                      Model model) {
+    public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                @AuthenticationPrincipal UserDetails userDetails,
+                                Model model) {
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
-        LocalDateTime startOfTheDay = selectedDate.atStartOfDay();
-        LocalDateTime endOfTheDay = selectedDate.atTime(23, 59, 59);
-        List<ExpenseCreatedEvent> filteredAllExpensesByDate = expenseRepository.listUsersExpensesByCategory(userDetails.getUsername(), "allCategories").stream()
-                .filter(expense -> expense.getExpenseCreatedAt().equals(selectedDate))
-                .collect(Collectors.toList());
 
-        double totalPriceOfUsersExpenses = filteredAllExpensesByDate.stream()
-                .mapToDouble(ExpenseCreatedEvent::getPrice)
-                .sum();
+        List<Transaction> allTransactions = financialAccountRepository.listTransactions(userDetails.getUsername());
 
-        List<IncomeCreatedEvent> filteredAllIncomesByDate = incomeRepository.listUsersIncomes(userDetails.getUsername()).stream()
-                .filter(income -> income.getIncomeCreatedAt().equals(selectedDate))
+        List<Transaction> allTransactionsFilteredByDay = allTransactions.stream()
+                .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
+                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList();
 
-        double totalWorthOfUsersDailyIncomes = filteredAllIncomesByDate.stream()
-                .mapToDouble(IncomeCreatedEvent::getPrice)
+        List<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
+                .filter(transaction -> transaction instanceof Expense)
+                .toList();
+
+        List<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
+                .filter(transaction -> transaction instanceof Income)
+                .toList();
+
+        double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
+                .mapToDouble(Transaction::getPrice)
                 .sum();
 
-        double totalPriceOfUsersFoodFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Jedzenie", filteredAllExpensesByDate);
-        double totalPriceOfUsersTravelsFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Podróże", filteredAllExpensesByDate);
-        double totalPriceOfUsersHealthFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Zdrowie", filteredAllExpensesByDate);
-        double totalPriceOfUsersEntertainmentFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Rozrywka", filteredAllExpensesByDate);
-        double totalPriceOfUsersHomeFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Dom", filteredAllExpensesByDate);
-        double totalPriceOfUsersOthersFilteredByDay = expenseRepository.getTotalPriceOfCategoryByDay("Inne", filteredAllExpensesByDate);
+        double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+
+        Map<String, Double> expensesByCategory = expensesFilteredByDay.stream()
+                .map(transaction -> (Expense) transaction)
+                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("userEmail", userDetails.getUsername());
-        model.addAttribute("addExpenseRequest", new AddExpenseRequest());
-        model.addAttribute("allUsersExpenses", filteredAllExpensesByDate);
-        model.addAttribute("totalUsersExpenses", totalPriceOfUsersExpenses);
-        model.addAttribute("usersFoodByDay", totalPriceOfUsersFoodFilteredByDay);
-        model.addAttribute("usersTravelsByDay", totalPriceOfUsersTravelsFilteredByDay);
-        model.addAttribute("usersHealthByDay", totalPriceOfUsersHealthFilteredByDay);
-        model.addAttribute("usersEntertainmentByDay", totalPriceOfUsersEntertainmentFilteredByDay);
-        model.addAttribute("usersHomeByDay", totalPriceOfUsersHomeFilteredByDay);
-        model.addAttribute("usersOthersByDay", totalPriceOfUsersOthersFilteredByDay);
-        model.addAttribute("addIncomeRequest", new AddIncomeRequest());
-        model.addAttribute("allUsersDailyIncomes", filteredAllIncomesByDate);
-        model.addAttribute("totalUsersDailyIncome", totalWorthOfUsersDailyIncomes);
+        model.addAttribute("transactions", allTransactionsFilteredByDay);
+        model.addAttribute("expensesByDay", expensesFilteredByDay);
+        model.addAttribute("incomesByDay", incomesFilteredByDay);
+        model.addAttribute("totalExpenses", totalExpensesFilteredByDay);
+        model.addAttribute("totalIncome", totalIncomeFilteredByDay);
+        model.addAttribute("expensesByCategory", expensesByCategory);
+
         return "dashboard";
     }
 }

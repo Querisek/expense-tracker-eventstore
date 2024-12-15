@@ -1,7 +1,6 @@
 package com.querisek.expensetracker.domain.expense;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class AddExpenseRequest {
     private String expenseCategory;

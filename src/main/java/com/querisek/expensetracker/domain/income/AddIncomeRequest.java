@@ -1,7 +1,6 @@
 package com.querisek.expensetracker.domain.income;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class AddIncomeRequest {
     private String incomeDescription;
