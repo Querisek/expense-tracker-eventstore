@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain.values;
+package com.querisek.expensetracker.domain.common;
 
 import java.time.LocalDate;
 
@@ -10,13 +10,14 @@ public class Date {
         this.value = value;
     }
 
-    private void validate(LocalDate value) {
+    public static Validation validate(LocalDate value) {
         if(value == null) {
-            throw new IllegalArgumentException("Brak daty.");
+            return Validation.error("Brak daty.");
         }
         if(value.isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Nie można wybrać daty, która jeszcze się nie wydarzyła.");
+            return Validation.error("Nie można wybrać daty, która jeszcze się nie wydarzyła.");
         }
+        return Validation.success();
     }
 
     public LocalDate getValue() {

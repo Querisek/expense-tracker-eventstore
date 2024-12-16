@@ -1,8 +1,8 @@
 package com.querisek.expensetracker.domain.transaction;
 
-import com.querisek.expensetracker.domain.values.Date;
-import com.querisek.expensetracker.domain.values.Description;
-import com.querisek.expensetracker.domain.values.Money;
+import com.querisek.expensetracker.domain.common.Date;
+import com.querisek.expensetracker.domain.common.Description;
+import com.querisek.expensetracker.domain.common.Money;
 
 import java.time.LocalDate;
 import java.util.UUID;

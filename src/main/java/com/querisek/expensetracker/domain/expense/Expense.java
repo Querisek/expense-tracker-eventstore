@@ -1,7 +1,7 @@
 package com.querisek.expensetracker.domain.expense;
 
 import com.querisek.expensetracker.domain.transaction.Transaction;
-import com.querisek.expensetracker.domain.values.Category;
+import com.querisek.expensetracker.domain.common.Category;
 
 import java.time.LocalDate;
 import java.util.UUID;

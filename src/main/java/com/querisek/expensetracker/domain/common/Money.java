@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain.values;
+package com.querisek.expensetracker.domain.common;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -19,20 +19,18 @@ public class Money {
         this.value = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
     }
 
-    private void validate(BigDecimal value) {
+    public static Validation validate(BigDecimal value) {
         if(value == null) {
-            throw new IllegalArgumentException("Amount cannot be null");
+            return Validation.error("Nie podano kwoty.");
         }
-
         BigDecimal roundedValue = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
-
         if(roundedValue.compareTo(MIN_VALUE) < 0) {
-            throw new IllegalArgumentException("Ilość pieniędzy musi być większa od zera.");
+            return Validation.error("Kwota musi być większa od zera.");
         }
-
         if(roundedValue.compareTo(MAX_VALUE) > 0) {
-            throw new IllegalArgumentException("Ilość pieniędzy nie może być większa niż " + MAX_VALUE);
+            return Validation.error("Kwota nie może być większa niż " + MAX_VALUE);
         }
+        return Validation.success();
     }
 
     public double getValue() {

@@ -1,4 +1,6 @@
-package com.querisek.expensetracker.domain.values;
+package com.querisek.expensetracker.domain.common;
+
+import jakarta.validation.Valid;
 
 public class Description {
     private final String value;
@@ -9,13 +11,14 @@ public class Description {
         this.value = value;
     }
 
-    private void validate(String value) {
+    public static Validation validate(String value) {
         if(value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Opis nie może być pusty.");
+            return Validation.error("Opis nie może być pusty.");
         }
         if(value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("Opis nie może być dłuższy niż " + MAX_LENGTH + " znaków.");
+            return Validation.error("Opis nie może być dłuższy niż " + MAX_LENGTH + " znaków.");
         }
+        return Validation.success();
     }
 
     public String getValue() {

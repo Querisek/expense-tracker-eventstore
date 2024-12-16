@@ -1,6 +1,7 @@
 package com.querisek.expensetracker.ui;
 
 import com.querisek.expensetracker.domain.FinancialAccount;
+import com.querisek.expensetracker.domain.common.*;
 import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
 import com.querisek.expensetracker.domain.income.AddIncomeRequest;
@@ -10,7 +11,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Controller
@@ -24,7 +27,29 @@ public class FinancialController {
     @PostMapping("/transactions/add/expense")
     public String addExpense(@ModelAttribute AddExpenseRequest request,
                              @AuthenticationPrincipal UserDetails userDetails,
-                             HttpServletRequest httpRequest) {
+                             HttpServletRequest httpRequest,
+                             RedirectAttributes redirectAttributes) {
+        Validation categoryValidation = Category.validate(request.getExpenseCategory());
+        Validation descriptionValidation = Description.validate(request.getExpenseDescription());
+        Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
+        Validation dateValidation = Date.validate(request.getExpenseCreatedAt());
+        if(!categoryValidation.isValid()) {
+            redirectAttributes.addAttribute("categoryInvalid", categoryValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+        if(!descriptionValidation.isValid()) {
+            redirectAttributes.addAttribute("descriptionInvalid", descriptionValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+        if(!moneyValidation.isValid()) {
+            redirectAttributes.addAttribute("priceInvalid", moneyValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+        if(!dateValidation.isValid()) {
+            redirectAttributes.addAttribute("dateInvalid", dateValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         Transaction expense = financialAccount.addExpense(
                 request.getExpenseCategory(),
@@ -43,7 +68,23 @@ public class FinancialController {
     @PostMapping("/transactions/add/income")
     public String addIncome(@ModelAttribute AddIncomeRequest request,
                             @AuthenticationPrincipal UserDetails userDetails,
-                            HttpServletRequest httpRequest) {
+                            HttpServletRequest httpRequest,
+                            RedirectAttributes redirectAttributes) {
+        Validation descriptionValidation = Description.validate(request.getIncomeDescription());
+        Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
+        Validation dateValidation = Date.validate(request.getIncomeCreatedAt());
+        if(!descriptionValidation.isValid()) {
+            redirectAttributes.addAttribute("descriptionInvalid", descriptionValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+        if(!moneyValidation.isValid()) {
+            redirectAttributes.addAttribute("priceInvalid", moneyValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
+        if(!dateValidation.isValid()) {
+            redirectAttributes.addAttribute("dateInvalid", dateValidation.getMessage());
+            return "redirect:" + httpRequest.getHeader("Referer");
+        }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         Transaction income = financialAccount.addIncome(
                 request.getIncomeDescription(),

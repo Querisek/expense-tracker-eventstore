@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain.values;
+package com.querisek.expensetracker.domain.common;
 
 import java.util.Set;
 
@@ -11,13 +11,14 @@ public class Category {
         this.value = value;
     }
 
-    private void validate(String value) {
+    public static Validation validate(String value) {
         if(value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Kategoria nie może być pusta.");
+            return Validation.error("Kategoria nie może być pusta.");
         }
         if(!VALID_CATEGORIES.contains(value)) {
-            throw new IllegalArgumentException("Niepoprawna kategoria.");
+            return Validation.error("Niepoprawna kategoria.");
         }
+        return Validation.success();
     }
 
     public String getValue() {
