@@ -1,10 +1,9 @@
 package com.querisek.expensetracker.ui;
 
 import com.querisek.expensetracker.domain.FinancialAccount;
+import com.querisek.expensetracker.domain.Transaction;
 import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
-import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.AddIncomeRequest;
-import com.querisek.expensetracker.domain.income.Income;
 import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,8 +26,7 @@ public class FinancialController {
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletRequest httpRequest) {
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
-        Expense expense = new Expense(
-                UUID.randomUUID(),
+        Transaction expense = financialAccount.addExpense(
                 request.getExpenseCategory(),
                 request.getExpenseDescription(),
                 request.getPrice(),
@@ -47,8 +45,7 @@ public class FinancialController {
                             @AuthenticationPrincipal UserDetails userDetails,
                             HttpServletRequest httpRequest) {
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
-        Income income = new Income(
-                UUID.randomUUID(),
+        Transaction income = financialAccount.addIncome(
                 request.getIncomeDescription(),
                 request.getPrice(),
                 request.getIncomeCreatedAt()
@@ -66,6 +63,7 @@ public class FinancialController {
                                     @AuthenticationPrincipal UserDetails userDetails,
                                     HttpServletRequest httpRequest) {
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        financialAccount.removeTransaction(id);
         financialAccountRepository.removeTransaction(financialAccount, id);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
