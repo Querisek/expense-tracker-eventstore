@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.ui;
 
+import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.AddIncomeRequest;
@@ -25,6 +26,7 @@ public class FinancialController {
     public String addExpense(@ModelAttribute AddExpenseRequest request,
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletRequest httpRequest) {
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         Expense expense = new Expense(
                 UUID.randomUUID(),
                 request.getExpenseCategory(),
@@ -32,7 +34,7 @@ public class FinancialController {
                 request.getPrice(),
                 request.getExpenseCreatedAt()
         );
-        financialAccountRepository.addTransaction(userDetails.getUsername(), expense);
+        financialAccountRepository.addTransaction(financialAccount, expense);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -44,13 +46,14 @@ public class FinancialController {
     public String addIncome(@ModelAttribute AddIncomeRequest request,
                             @AuthenticationPrincipal UserDetails userDetails,
                             HttpServletRequest httpRequest) {
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         Income income = new Income(
                 UUID.randomUUID(),
                 request.getIncomeDescription(),
                 request.getPrice(),
                 request.getIncomeCreatedAt()
         );
-        financialAccountRepository.addTransaction(userDetails.getUsername(), income);
+        financialAccountRepository.addTransaction(financialAccount, income);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -62,7 +65,8 @@ public class FinancialController {
     public String deleteTransaction(@PathVariable UUID id,
                                     @AuthenticationPrincipal UserDetails userDetails,
                                     HttpServletRequest httpRequest) {
-        financialAccountRepository.removeTransaction(userDetails.getUsername(), id);
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        financialAccountRepository.removeTransaction(financialAccount, id);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {

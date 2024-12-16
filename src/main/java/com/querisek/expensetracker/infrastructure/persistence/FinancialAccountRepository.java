@@ -25,10 +25,10 @@ public class FinancialAccountRepository {
         this.objectMapper = objectMapper;
     }
 
-    public void addTransaction(String userId, Transaction transaction) {
+    public void addTransaction(FinancialAccount financialAccount, Transaction transaction) {
         try {
-            TransactionAddedEvent event = createTransactionAddedEvent(userId, transaction);
-            String streamName = String.format("financial-account-%s", userId);
+            TransactionAddedEvent event = createTransactionAddedEvent(financialAccount.getUserId(), transaction);
+            String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
             byte[] eventBytes = objectMapper.writeValueAsBytes(event);
             EventData eventData = EventData.builderAsJson("TransactionAdded", eventBytes).build();
             eventStoreDBClient.appendToStream(streamName, eventData).get();
@@ -37,10 +37,10 @@ public class FinancialAccountRepository {
         }
     }
 
-    public void removeTransaction(String userId, UUID transactionId) {
+    public void removeTransaction(FinancialAccount financialAccount, UUID transactionId) {
         try {
-            TransactionRemovedEvent event = new TransactionRemovedEvent(transactionId, userId, LocalDate.now());
-            String streamName = String.format("financial-account-%s", userId);
+            TransactionRemovedEvent event = new TransactionRemovedEvent(transactionId, financialAccount.getUserId(), LocalDate.now());
+            String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
             byte[] eventBytes = objectMapper.writeValueAsBytes(event);
             EventData eventData = EventData.builderAsJson("TransactionRemoved", eventBytes).build();
             eventStoreDBClient.appendToStream(streamName, eventData).get();
@@ -49,13 +49,13 @@ public class FinancialAccountRepository {
         }
     }
 
-    public List<Transaction> listTransactions(String userId) {
+    public FinancialAccount buildFinancialAccount(String userId) {
         try {
-            String streamName = String.format("financial-account-%s", userId);
+            List<Transaction> transactions = new ArrayList<>();
+            String streamName = String.format("FinancialAccount-%s", userId);
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
                     .fromStart();
-            List<Transaction> transactions = new ArrayList<>();
             try {
                 ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
                 for (ResolvedEvent event : result.getEvents()) {
@@ -72,10 +72,10 @@ public class FinancialAccountRepository {
                 }
             } catch (ExecutionException e) {
                 if (e.getCause() instanceof StreamNotFoundException) {
-                    return transactions;
+                    return new FinancialAccount(userId, transactions);
                 }
             }
-            return transactions;
+            return new FinancialAccount(userId, transactions);
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie przeczytac transakcji.", e);
         }

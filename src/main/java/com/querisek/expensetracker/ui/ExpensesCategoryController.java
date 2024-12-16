@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.ui;
 
+import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.Transaction;
 import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
@@ -25,22 +26,20 @@ public class ExpensesCategoryController {
 
     @GetMapping
     public String showExpenseCategoriesToUser(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        List<Transaction> allTransactions = financialAccountRepository.listTransactions(userDetails.getUsername());
-
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        List<Transaction> allTransactions = financialAccount.getTransactions();
         List<Transaction> allExpenses = allTransactions.stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList();
-
         double totalExpenses = allExpenses.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
-
         Map<String, Double> expensesByCategory = allExpenses.stream()
                 .map(transaction -> (Expense) transaction)
                 .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
 
-        model.addAttribute("userEmail", userDetails.getUsername());
+        model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("allExpenses", allExpenses);
         model.addAttribute("totalExpenses", totalExpenses);
         model.addAttribute("expensesByCategory", expensesByCategory);
