@@ -1,17 +1,19 @@
 package com.querisek.expensetracker.domain.transaction;
 
+import com.querisek.expensetracker.domain.values.Description;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
 public abstract class Transaction {
     private final UUID id;
-    private final String description;
+    private final Description description;
     private final double price;
     private final LocalDate createdAt;
 
     protected Transaction(UUID id, String description, double price, LocalDate createdAt) {
         this.id = id;
-        this.description = description;
+        this.description = new Description(description);
         this.price = price;
         this.createdAt = createdAt;
     }
@@ -21,7 +23,7 @@ public abstract class Transaction {
     }
 
     public String getDescription() {
-        return description;
+        return description.getValue();
     }
 
     public double getPrice() {
