@@ -3,7 +3,7 @@ package com.querisek.expensetracker.ui;
 import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
-import com.querisek.expensetracker.domain.Transaction;
+import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

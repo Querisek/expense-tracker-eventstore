@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querisek.expensetracker.domain.*;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.transaction.Transaction;
+import com.querisek.expensetracker.domain.transaction.TransactionAddedEvent;
+import com.querisek.expensetracker.domain.transaction.TransactionRemovedEvent;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;

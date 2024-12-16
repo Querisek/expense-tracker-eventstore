@@ -1,4 +1,4 @@
-package com.querisek.expensetracker.domain;
+package com.querisek.expensetracker.domain.transaction;
 
 import java.time.LocalDate;
 import java.util.UUID;

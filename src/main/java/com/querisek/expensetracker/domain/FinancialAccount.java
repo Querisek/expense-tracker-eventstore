@@ -2,6 +2,7 @@ package com.querisek.expensetracker.domain;
 
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.transaction.Transaction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

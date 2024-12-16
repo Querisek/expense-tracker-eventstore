@@ -1,7 +1,7 @@
 package com.querisek.expensetracker.ui;
 
 import com.querisek.expensetracker.domain.FinancialAccount;
-import com.querisek.expensetracker.domain.Transaction;
+import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.domain.expense.AddExpenseRequest;
 import com.querisek.expensetracker.domain.income.AddIncomeRequest;
 import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
