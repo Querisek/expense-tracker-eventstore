@@ -1,6 +1,8 @@
 package com.querisek.expensetracker.domain.transaction;
 
+import com.querisek.expensetracker.domain.values.Date;
 import com.querisek.expensetracker.domain.values.Description;
+import com.querisek.expensetracker.domain.values.Money;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -8,14 +10,14 @@ import java.util.UUID;
 public abstract class Transaction {
     private final UUID id;
     private final Description description;
-    private final double price;
-    private final LocalDate createdAt;
+    private final Money price;
+    private final Date createdAt;
 
     protected Transaction(UUID id, String description, double price, LocalDate createdAt) {
         this.id = id;
         this.description = new Description(description);
-        this.price = price;
-        this.createdAt = createdAt;
+        this.price = new Money(price);
+        this.createdAt = new Date(createdAt);
     }
 
     public UUID getId() {
@@ -27,10 +29,10 @@ public abstract class Transaction {
     }
 
     public double getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public LocalDate getCreatedAt() {
-        return createdAt;
+        return createdAt.getValue();
     }
 }

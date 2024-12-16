@@ -1,20 +1,22 @@
 package com.querisek.expensetracker.domain.values;
 
-public class Description {
-    private final String value;
-    private static final int MAX_LENGTH = 50;
+import java.util.Set;
 
-    public Description(String value) {
+public class Category {
+    private final String value;
+    private static final Set<String> VALID_CATEGORIES = Set.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
+
+    public Category(String value) {
         validate(value);
         this.value = value;
     }
 
     private void validate(String value) {
         if(value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Opis nie może być pusty.");
+            throw new IllegalArgumentException("Kategoria nie może być pusta.");
         }
-        if(value.length() > MAX_LENGTH) {
-            throw new IllegalArgumentException("Opis nie może być dłuższy niż " + MAX_LENGTH + " znaków.");
+        if(!VALID_CATEGORIES.contains(value)) {
+            throw new IllegalArgumentException("Niepoprawna kategoria.");
         }
     }
 
@@ -26,7 +28,7 @@ public class Description {
     public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Description that = (Description) o;
+        Category that = (Category) o;
         return value.equals(that.value);
     }
 

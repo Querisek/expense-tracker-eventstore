@@ -1,0 +1,59 @@
+package com.querisek.expensetracker.domain.values;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Objects;
+
+public class Money {
+    private final BigDecimal value;
+    private static final int DECIMAL_PLACES = 2;
+    private static final BigDecimal MIN_VALUE = BigDecimal.ZERO;
+    private static final BigDecimal MAX_VALUE = new BigDecimal("1000000000.00");
+
+    public Money(double value) {
+        this(BigDecimal.valueOf(value));
+    }
+
+    public Money(BigDecimal value) {
+        validate(value);
+        this.value = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
+    }
+
+    private void validate(BigDecimal value) {
+        if(value == null) {
+            throw new IllegalArgumentException("Amount cannot be null");
+        }
+
+        BigDecimal roundedValue = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
+
+        if(roundedValue.compareTo(MIN_VALUE) < 0) {
+            throw new IllegalArgumentException("Ilość pieniędzy musi być większa od zera.");
+        }
+
+        if(roundedValue.compareTo(MAX_VALUE) > 0) {
+            throw new IllegalArgumentException("Ilość pieniędzy nie może być większa niż " + MAX_VALUE);
+        }
+    }
+
+    public double getValue() {
+        return value.doubleValue();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Money money = (Money) o;
+        return value.compareTo(money.value) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public String toString() {
+        return value.toString() + " PLN";
+    }
+}
