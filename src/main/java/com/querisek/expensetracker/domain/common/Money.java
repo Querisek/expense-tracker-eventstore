@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
-public class Money {
+public final class Money {
     private final BigDecimal value;
     private static final int DECIMAL_PLACES = 2;
     private static final BigDecimal MIN_VALUE = BigDecimal.ZERO;
@@ -28,7 +28,7 @@ public class Money {
             return Validation.error("Kwota musi być większa od zera.");
         }
         if(roundedValue.compareTo(MAX_VALUE) > 0) {
-            return Validation.error("Kwota nie może być większa niż " + MAX_VALUE);
+            return Validation.error("Kwota nie może być większa niż " + MAX_VALUE + " PLN.");
         }
         return Validation.success();
     }
