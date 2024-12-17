@@ -31,22 +31,12 @@ public class FinancialAccountRepository {
     public void save(FinancialAccount financialAccount) {
         try {
             String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
-            List<EventData> eventData = financialAccount.getUncommitedEvents().stream()
-                    .map(event -> {
-                        try {
-                            String eventType = event.getClass().getSimpleName();
-                            byte[] data = objectMapper.writeValueAsBytes(event);
-                            return EventData.builderAsJson(eventType, data).build();
-                        } catch(Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }).toList();
-            if(!eventData.isEmpty()) {
-                for(EventData event : eventData) {
-                    System.out.println("test");
-                    eventStoreDBClient.appendToStream(streamName, event).get();
-                }
-                financialAccount.clearUncommitedEvents();
+            Object event = financialAccount.getUncommitedEvent();
+            if(event != null) {
+                String eventType = event.getClass().getSimpleName();
+                byte[] data = objectMapper.writeValueAsBytes(event);
+                EventData eventData = EventData.builderAsJson(eventType, data).build();
+                eventStoreDBClient.appendToStream(streamName, eventData).get();
             }
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
@@ -84,12 +74,10 @@ public class FinancialAccountRepository {
                                         event.getCreatedAt()
                                 );
                             }
-                            financialAccount.clearUncommitedEvents();
                         }
                         case "TransactionRemovedEvent" -> {
                             TransactionRemovedEvent event = objectMapper.readValue(eventBody, TransactionRemovedEvent.class);
                             financialAccount.removeTransaction(event.getTransactionId());
-                            financialAccount.clearUncommitedEvents();
                         }
                     }
                 }

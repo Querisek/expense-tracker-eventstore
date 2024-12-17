@@ -14,17 +14,16 @@ import java.util.UUID;
 public class FinancialAccount {
     private final String userId;
     private final List<Transaction> transactions;
-    private final List<Object> uncommitedEvents;
+    private Object uncommitedEvent;
 
     public FinancialAccount(String userId) {
         this.userId = userId;
         this.transactions = new ArrayList<>();
-        this.uncommitedEvents = new ArrayList<>();
     }
 
     public void addExpense(String category, String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        TransactionAddedEvent event = new TransactionAddedEvent(
+        uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
                 userId,
                 "EXPENSE",
@@ -33,10 +32,6 @@ public class FinancialAccount {
                 price,
                 date
         );
-        uncommitedEvents.add(event);
-
-        Transaction expense = new Expense(transactionId, category, description, price, date);
-        transactions.add(expense);
     }
 
     public void addExpenseFromEvent(UUID id,String category, String description, double price, LocalDate date) {
@@ -46,7 +41,7 @@ public class FinancialAccount {
 
     public void addIncome(String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        TransactionAddedEvent event = new TransactionAddedEvent(
+        uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
                 userId,
                 "INCOME",
@@ -55,10 +50,6 @@ public class FinancialAccount {
                 price,
                 date
         );
-        uncommitedEvents.add(event);
-
-        Transaction income = new Income(transactionId, description, price, date);
-        transactions.add(income);
     }
 
     public void addIncomeFromEvent(UUID id, String description, double price, LocalDate date) {
@@ -70,19 +61,13 @@ public class FinancialAccount {
         boolean transactionExists = transactions.stream()
                 .anyMatch(transaction -> transaction.getId().equals(transactionId));
         if(transactionExists) {
-            TransactionRemovedEvent event = new TransactionRemovedEvent(
+            uncommitedEvent = new TransactionRemovedEvent(
                     transactionId,
                     userId,
                     LocalDate.now()
             );
-            uncommitedEvents.add(event);
-
             transactions.removeIf(transaction -> transaction.getId().equals(transactionId));
         }
-    }
-
-    public void clearUncommitedEvents() {
-        uncommitedEvents.clear();
     }
 
     public String getUserId() {
@@ -93,7 +78,7 @@ public class FinancialAccount {
         return transactions;
     }
 
-    public List<Object> getUncommitedEvents() {
-        return uncommitedEvents;
+    public Object getUncommitedEvent() {
+        return uncommitedEvent;
     }
 }
