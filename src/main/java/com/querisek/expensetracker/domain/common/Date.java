@@ -2,7 +2,7 @@ package com.querisek.expensetracker.domain.common;
 
 import java.time.LocalDate;
 
-public class Date {
+public final class Date {
     private final LocalDate value;
 
     public Date(LocalDate value) {

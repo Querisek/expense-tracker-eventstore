@@ -2,7 +2,7 @@ package com.querisek.expensetracker.domain.common;
 
 import java.util.Set;
 
-public class Category {
+public final class Category {
     private final String value;
     private static final Set<String> VALID_CATEGORIES = Set.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
 

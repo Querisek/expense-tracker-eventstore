@@ -1,6 +1,6 @@
 package com.querisek.expensetracker.domain.common;
 
-public class Validation {
+public final class Validation {
     private final boolean valid;
     private final String message;
 
