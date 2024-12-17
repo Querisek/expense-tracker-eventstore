@@ -51,13 +51,13 @@ public class FinancialController {
         }
 
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
-        Transaction expense = financialAccount.addExpense(
+        financialAccount.addExpense(
                 request.getExpenseCategory(),
                 request.getExpenseDescription(),
                 request.getPrice(),
                 request.getExpenseCreatedAt()
         );
-        financialAccountRepository.addTransaction(financialAccount, expense);
+        financialAccountRepository.save(financialAccount);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -86,12 +86,12 @@ public class FinancialController {
             return "redirect:" + httpRequest.getHeader("Referer");
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
-        Transaction income = financialAccount.addIncome(
+        financialAccount.addIncome(
                 request.getIncomeDescription(),
                 request.getPrice(),
                 request.getIncomeCreatedAt()
         );
-        financialAccountRepository.addTransaction(financialAccount, income);
+        financialAccountRepository.save(financialAccount);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -105,7 +105,7 @@ public class FinancialController {
                                     HttpServletRequest httpRequest) {
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         financialAccount.removeTransaction(id);
-        financialAccountRepository.removeTransaction(financialAccount, id);
+        financialAccountRepository.save(financialAccount);
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {

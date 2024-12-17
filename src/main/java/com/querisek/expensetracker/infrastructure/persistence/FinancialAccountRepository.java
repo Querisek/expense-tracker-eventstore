@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Repository
 public class FinancialAccountRepository {
@@ -27,96 +28,79 @@ public class FinancialAccountRepository {
         this.objectMapper = objectMapper;
     }
 
-    public void addTransaction(FinancialAccount financialAccount, Transaction transaction) {
+    public void save(FinancialAccount financialAccount) {
         try {
-            TransactionAddedEvent event = createTransactionAddedEvent(financialAccount.getUserId(), transaction);
             String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
-            byte[] eventBytes = objectMapper.writeValueAsBytes(event);
-            EventData eventData = EventData.builderAsJson("TransactionAdded", eventBytes).build();
-            eventStoreDBClient.appendToStream(streamName, eventData).get();
+            List<EventData> eventData = financialAccount.getUncommitedEvents().stream()
+                    .map(event -> {
+                        try {
+                            String eventType = event.getClass().getSimpleName();
+                            byte[] data = objectMapper.writeValueAsBytes(event);
+                            return EventData.builderAsJson(eventType, data).build();
+                        } catch(Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }).toList();
+            if(!eventData.isEmpty()) {
+                for(EventData event : eventData) {
+                    System.out.println("test");
+                    eventStoreDBClient.appendToStream(streamName, event).get();
+                }
+                financialAccount.clearUncommitedEvents();
+            }
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
         }
     }
 
-    public void removeTransaction(FinancialAccount financialAccount, UUID transactionId) {
-        try {
-            TransactionRemovedEvent event = new TransactionRemovedEvent(transactionId, financialAccount.getUserId(), LocalDate.now());
-            String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
-            byte[] eventBytes = objectMapper.writeValueAsBytes(event);
-            EventData eventData = EventData.builderAsJson("TransactionRemoved", eventBytes).build();
-            eventStoreDBClient.appendToStream(streamName, eventData).get();
-        } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie usunac transakcji.", e);
-        }
-    }
-
     public FinancialAccount buildFinancialAccount(String userId) {
         try {
-            List<Transaction> transactions = new ArrayList<>();
             String streamName = String.format("FinancialAccount-%s", userId);
+            FinancialAccount financialAccount = new FinancialAccount(userId);
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
                     .fromStart();
             try {
                 ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
-                for (ResolvedEvent event : result.getEvents()) {
-                    String eventBody = new String(event.getEvent().getEventData(), StandardCharsets.UTF_8);
-                    String eventType = event.getEvent().getEventType();
-                    if (eventType.equals("TransactionAdded")) {
-                        TransactionAddedEvent transactionEvent = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
-                        Transaction transaction = createTransactionFromEvent(transactionEvent);
-                        transactions.add(transaction);
-                    } else if (eventType.equals("TransactionRemoved")) {
-                        TransactionRemovedEvent removedEvent = objectMapper.readValue(eventBody, TransactionRemovedEvent.class);
-                        transactions.removeIf(transaction -> transaction.getId().equals(removedEvent.getTransactionId()));
+                for(ResolvedEvent resolvedEvent : result.getEvents()) {
+                    String eventBody = new String(resolvedEvent.getEvent().getEventData(), StandardCharsets.UTF_8);
+                    String eventType = resolvedEvent.getEvent().getEventType();
+                    switch(eventType) {
+                        case "TransactionAddedEvent" -> {
+                            TransactionAddedEvent event = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
+                            if(event.getType().equals("EXPENSE")) {
+                                financialAccount.addExpenseFromEvent(
+                                        event.getTransactionId(),
+                                        event.getCategory(),
+                                        event.getDescription(),
+                                        event.getPrice(),
+                                        event.getCreatedAt()
+                                );
+                            } else {
+                                financialAccount.addIncomeFromEvent(
+                                        event.getTransactionId(),
+                                        event.getDescription(),
+                                        event.getPrice(),
+                                        event.getCreatedAt()
+                                );
+                            }
+                            financialAccount.clearUncommitedEvents();
+                        }
+                        case "TransactionRemovedEvent" -> {
+                            TransactionRemovedEvent event = objectMapper.readValue(eventBody, TransactionRemovedEvent.class);
+                            financialAccount.removeTransaction(event.getTransactionId());
+                            financialAccount.clearUncommitedEvents();
+                        }
                     }
                 }
-            } catch (ExecutionException e) {
-                if (e.getCause() instanceof StreamNotFoundException) {
-                    return new FinancialAccount(userId, transactions);
+            } catch(ExecutionException e) {
+                if (!(e.getCause() instanceof StreamNotFoundException)) {
+                    throw new ExecutionException(e);
                 }
             }
-            return new FinancialAccount(userId, transactions);
-        } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie przeczytac transakcji.", e);
-        }
-    }
-
-    private TransactionAddedEvent createTransactionAddedEvent(String userId, Transaction transaction) {
-        TransactionAddedEvent event = new TransactionAddedEvent();
-        event.setTransactionId(transaction.getId());
-        event.setUserId(userId);
-        if(transaction instanceof Expense) {
-            event.setType("EXPENSE");
-            event.setCategory(((Expense) transaction).getCategory());
-        } else if(transaction instanceof Income) {
-            event.setType("INCOME");
-            event.setCategory(null);
-        }
-        event.setDescription(transaction.getDescription());
-        event.setPrice(transaction.getPrice());
-        event.setCreatedAt(transaction.getCreatedAt());
-
-        return event;
-    }
-
-    private Transaction createTransactionFromEvent(TransactionAddedEvent event) {
-        if(event.getType().equals("EXPENSE")) {
-            return new Expense(
-                    event.getTransactionId(),
-                    event.getCategory(),
-                    event.getDescription(),
-                    event.getPrice(),
-                    event.getCreatedAt()
-            );
-        } else {
-            return new Income(
-                    event.getTransactionId(),
-                    event.getDescription(),
-                    event.getPrice(),
-                    event.getCreatedAt()
-            );
+            return financialAccount;
+        } catch(Exception e) {
+            throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
         }
     }
 }
