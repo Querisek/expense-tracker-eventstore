@@ -1,8 +1,9 @@
 package com.querisek.expensetracker.ui;
 
+import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
-import com.querisek.expensetracker.domain.Transaction;
+import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.infrastructure.persistence.FinancialAccountRepository;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,37 +33,31 @@ public class DashboardController {
     public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 Model model) {
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
-
-        List<Transaction> allTransactions = financialAccountRepository.listTransactions(userDetails.getUsername());
-
+        List<Transaction> allTransactions = financialAccount.getTransactions();
         List<Transaction> allTransactionsFilteredByDay = allTransactions.stream()
                 .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList();
-
         List<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .toList();
-
         List<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Income)
                 .toList();
-
         double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
-
         double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
-
         Map<String, Double> expensesByCategory = expensesFilteredByDay.stream()
                 .map(transaction -> (Expense) transaction)
                 .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
 
         model.addAttribute("selectedDate", selectedDate);
-        model.addAttribute("userEmail", userDetails.getUsername());
+        model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("transactions", allTransactionsFilteredByDay);
         model.addAttribute("expensesByDay", expensesFilteredByDay);
         model.addAttribute("incomesByDay", incomesFilteredByDay);

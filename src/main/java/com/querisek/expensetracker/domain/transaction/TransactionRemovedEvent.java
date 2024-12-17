@@ -1,4 +1,6 @@
-package com.querisek.expensetracker.domain;
+package com.querisek.expensetracker.domain.transaction;
+
+import com.querisek.expensetracker.domain.common.Date;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -6,14 +8,14 @@ import java.util.UUID;
 public class TransactionRemovedEvent {
     private UUID transactionId;
     private String userId;
-    private LocalDate removedAt;
+    private Date removedAt;
 
     public TransactionRemovedEvent() {}
 
     public TransactionRemovedEvent(UUID transactionId, String userId, LocalDate removedAt) {
         this.transactionId = transactionId;
         this.userId = userId;
-        this.removedAt = removedAt;
+        this.removedAt = new Date(removedAt);
     }
 
     public UUID getTransactionId() {
@@ -33,10 +35,10 @@ public class TransactionRemovedEvent {
     }
 
     public LocalDate getRemovedAt() {
-        return removedAt;
+        return removedAt.getValue();
     }
 
     public void setRemovedAt(LocalDate removedAt) {
-        this.removedAt = removedAt;
+        this.removedAt = new Date(removedAt);
     }
 }

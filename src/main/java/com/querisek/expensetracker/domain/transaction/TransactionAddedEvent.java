@@ -1,4 +1,9 @@
-package com.querisek.expensetracker.domain;
+package com.querisek.expensetracker.domain.transaction;
+
+import com.querisek.expensetracker.domain.common.Category;
+import com.querisek.expensetracker.domain.common.Date;
+import com.querisek.expensetracker.domain.common.Description;
+import com.querisek.expensetracker.domain.common.Money;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -7,10 +12,10 @@ public class TransactionAddedEvent {
     private UUID transactionId;
     private String userId;
     private String type;
-    private String category;
-    private String description;
-    private double price;
-    private LocalDate createdAt;
+    private Category category;
+    private Description description;
+    private Money price;
+    private Date createdAt;
 
     public TransactionAddedEvent() {}
 
@@ -18,10 +23,10 @@ public class TransactionAddedEvent {
         this.transactionId = transactionId;
         this.userId = userId;
         this.type = type;
-        this.category = category;
-        this.description = description;
-        this.price = price;
-        this.createdAt = createdAt;
+        this.category = new Category(category);
+        this.description = new Description(description);
+        this.price = new Money(price);
+        this.createdAt = new Date(createdAt);
     }
 
     public UUID getTransactionId() {
@@ -49,34 +54,34 @@ public class TransactionAddedEvent {
     }
 
     public String getCategory() {
-        return category;
+        return category.getValue();
     }
 
     public void setCategory(String category) {
-        this.category = category;
+        this.category = new Category(category);
     }
 
     public String getDescription() {
-        return description;
+        return description.getValue();
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = new Description(description);
     }
 
     public double getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public void setPrice(double price) {
-        this.price = price;
+        this.price = new Money(price);
     }
 
     public LocalDate getCreatedAt() {
-        return createdAt;
+        return createdAt.getValue();
     }
 
     public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = new Date(createdAt);
     }
 }
