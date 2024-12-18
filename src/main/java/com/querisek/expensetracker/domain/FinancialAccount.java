@@ -15,10 +15,18 @@ public class FinancialAccount {
     private final String userId;
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
+    private long version;
 
     public FinancialAccount(String userId) {
         this.userId = userId;
         this.transactions = new ArrayList<>();
+        this.version = 0;
+    }
+
+    public FinancialAccount(FinancialAccountSnapshot snapshot) {
+        this.userId = snapshot.getUserId();
+        this.transactions = snapshot.getTransactions();
+        this.version = snapshot.getVersion();
     }
 
     public void addExpense(String category, String description, double price, LocalDate date) {
@@ -80,5 +88,13 @@ public class FinancialAccount {
 
     public Object getUncommitedEvent() {
         return uncommitedEvent;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void nextVersion() {
+        this.version++;
     }
 }
