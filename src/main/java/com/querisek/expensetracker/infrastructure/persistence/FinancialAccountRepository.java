@@ -30,19 +30,25 @@ public class FinancialAccountRepository {
         this.objectMapper = objectMapper;
     }
 
-    public void save(FinancialAccount financialAccount, YearMonth yearMonth) {
+    public void save(FinancialAccount financialAccount, YearMonth currentMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), yearMonth);
+            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), currentMonth);
             Object event = financialAccount.getUncommitedEvent();
             if(event != null) {
+                if(isFirstEventInMonth(streamName)) {
+                    YearMonth previousMonth = currentMonth.minusMonths(1);
+                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), currentMonth.minusMonths(1));
+                    FinancialAccount accountFromPreviousMonth = buildFinancialAccount(financialAccount.getUserId(), previousMonth);
+                    MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(accountFromPreviousMonth, previousMonth);
+                    EventData snapshotEvent = EventData.builderAsJson("PreviousMonthSummaryEvent", objectMapper.writeValueAsBytes(snapshot)).build();
+                    EventData monthClosedEvent = EventData.builderAsJson("MonthClosedEvent", objectMapper.writeValueAsBytes(snapshot)).build();
+                    eventStoreDBClient.appendToStream(streamName, snapshotEvent).get();
+                    eventStoreDBClient.appendToStream(previousStreamName, monthClosedEvent).get();
+                }
                 String eventType = event.getClass().getSimpleName();
                 byte[] data = objectMapper.writeValueAsBytes(event);
                 EventData eventData = EventData.builderAsJson(eventType, data).build();
                 eventStoreDBClient.appendToStream(streamName, eventData).get();
-            }
-            YearMonth now = YearMonth.now();
-            if(yearMonth.equals(now) && isFirstTransactionOfMonth(streamName)) {
-                createSnapshot(financialAccount, yearMonth.minusMonths(1));
             }
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
@@ -53,46 +59,55 @@ public class FinancialAccountRepository {
         try {
             String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
             FinancialAccount financialAccount = new FinancialAccount(userId);
-            YearMonth previousMonth = yearMonth.minusMonths(1);
-            MonthlySnapshot snapshot = loadLastSnapshot(userId, previousMonth);
-            if(snapshot != null) {
-                financialAccount.loadFromSnapshot(
-                        snapshot.getTotalExpenses(),
-                        snapshot.getTotalIncomes(),
-                        snapshot.getExpensesByCategory()
-                );
-            }
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
-                    .fromStart();
+                    .fromStart()
+                    .maxCount(1);
             try {
                 ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
+                if(!result.getEvents().isEmpty()) {
+                    ResolvedEvent firstEvent = result.getEvents().get(0);
+                    if(firstEvent.getEvent().getEventType().equals("PreviousMonthSummary")) {
+                        MonthlySnapshot snapshot = objectMapper.readValue(firstEvent.getEvent().getEventData(), MonthlySnapshot.class);
+                        financialAccount.loadFromSnapshot(
+                                snapshot.getTotalExpenses(),
+                                snapshot.getTotalIncomes(),
+                                snapshot.getExpensesByCategory()
+                        );
+                    }
+                }
+                options = ReadStreamOptions.get()
+                        .forwards()
+                        .fromStart();
+                result = eventStoreDBClient.readStream(streamName, options).get();
                 for(ResolvedEvent resolvedEvent : result.getEvents()) {
-                    String eventBody = new String(resolvedEvent.getEvent().getEventData(), StandardCharsets.UTF_8);
-                    String eventType = resolvedEvent.getEvent().getEventType();
-                    switch(eventType) {
-                        case "TransactionAddedEvent" -> {
-                            TransactionAddedEvent event = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
-                            if(event.getType().equals("EXPENSE")) {
-                                financialAccount.addExpenseFromEvent(
-                                        event.getTransactionId(),
-                                        event.getCategory(),
-                                        event.getDescription(),
-                                        event.getPrice(),
-                                        event.getCreatedAt()
-                                );
-                            } else {
-                                financialAccount.addIncomeFromEvent(
-                                        event.getTransactionId(),
-                                        event.getDescription(),
-                                        event.getPrice(),
-                                        event.getCreatedAt()
-                                );
+                    if (!resolvedEvent.getEvent().getEventType().equals("PreviousMonthSummary")) {
+                        String eventBody = new String(resolvedEvent.getEvent().getEventData(), StandardCharsets.UTF_8);
+                        String eventType = resolvedEvent.getEvent().getEventType();
+                        switch (eventType) {
+                            case "TransactionAddedEvent" -> {
+                                TransactionAddedEvent event = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
+                                if (event.getType().equals("EXPENSE")) {
+                                    financialAccount.addExpenseFromEvent(
+                                            event.getTransactionId(),
+                                            event.getCategory(),
+                                            event.getDescription(),
+                                            event.getPrice(),
+                                            event.getCreatedAt()
+                                    );
+                                } else {
+                                    financialAccount.addIncomeFromEvent(
+                                            event.getTransactionId(),
+                                            event.getDescription(),
+                                            event.getPrice(),
+                                            event.getCreatedAt()
+                                    );
+                                }
                             }
-                        }
-                        case "TransactionRemovedEvent" -> {
-                            TransactionRemovedEvent event = objectMapper.readValue(eventBody, TransactionRemovedEvent.class);
-                            financialAccount.removeTransaction(event.getTransactionId());
+                            case "TransactionRemovedEvent" -> {
+                                TransactionRemovedEvent event = objectMapper.readValue(eventBody, TransactionRemovedEvent.class);
+                                financialAccount.removeTransaction(event.getTransactionId());
+                            }
                         }
                     }
                 }
@@ -108,53 +123,18 @@ public class FinancialAccountRepository {
         }
     }
 
-    private boolean isFirstTransactionOfMonth(String streamName) throws Exception {
-        ReadStreamOptions options = ReadStreamOptions.get()
-                .maxCount(2)
-                .fromStart();
-        ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
-        return result.getEvents().size() == 1;
-    }
-
-    private void createSnapshot(FinancialAccount account, YearMonth yearMonth) {
-        MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(account, yearMonth);
-        String streamName = String.format("FinancialAccount-%s-%s", account.getUserId(), yearMonth);
+    private boolean isFirstEventInMonth(String streamName) {
         try {
-            EventData snapshotEvent = EventData.builderAsJson(
-                    "MonthlySnapshotEvent",
-                    objectMapper.writeValueAsBytes(snapshot)
-            ).build();
-            eventStoreDBClient.appendToStream(streamName, snapshotEvent).get();
-        } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie zapisac snapshota.", e);
-        }
-    }
-
-    private MonthlySnapshot loadLastSnapshot(String userId, YearMonth yearMonth) {
-        try {
-            String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
             ReadStreamOptions options = ReadStreamOptions.get()
-                    .backwards()
-                    .maxCount(1);
-            try {
-                ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
-                if (!result.getEvents().isEmpty()) {
-                    ResolvedEvent lastEvent = result.getEvents().get(0);
-                    if (lastEvent.getEvent().getEventType().equals("MonthlySnapshotEvent")) {
-                        return objectMapper.readValue(
-                                lastEvent.getEvent().getEventData(),
-                                MonthlySnapshot.class
-                        );
-                    }
-                }
-            } catch (ExecutionException e) {
-                if (!(e.getCause() instanceof StreamNotFoundException)) {
-                    throw e;
-                }
-            }
-            return null;
+                    .maxCount(1)
+                    .fromStart();
+            ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
+            return result.getEvents().isEmpty();
         } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie wczytac snapshota.", e);
+            if (e.getCause() instanceof StreamNotFoundException) {
+                return true;
+            }
+            throw new RuntimeException("Nie udalo sie sprawdzic strumienia.", e);
         }
     }
 }
