@@ -351,7 +351,7 @@
           </div>
           <div class="mb-3">
             <label for="expenseDate" class="form-label">Data wydatku</label>
-            <input type="date" class="form-control" id="expenseDate" name="expenseCreatedAt" th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
+            <input type="date" class="form-control" id="expenseDate" name="expenseCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
         </form>
       </div>
@@ -381,7 +381,7 @@
           </div>
           <div class="mb-3">
             <label for="incomeDate" class="form-label">Data wydatku</label>
-            <input type="date" class="form-control" id="incomeDate" name="incomeCreatedAt" th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
+            <input type="date" class="form-control" id="incomeDate" name="incomeCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
         </form>
       </div>
