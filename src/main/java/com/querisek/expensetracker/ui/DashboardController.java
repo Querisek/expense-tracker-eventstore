@@ -32,59 +32,35 @@ public class DashboardController {
 
     @GetMapping("/")
     public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                @RequestParam(required = false) Integer year,
-                                @RequestParam(required = false) Integer month,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 Model model) {
         YearMonth yearMonth;
-        if(year != null && month != null) {
-            yearMonth = YearMonth.of(year, month);
+        if(date != null) {
+            yearMonth = YearMonth.from(date);
         } else {
             yearMonth = YearMonth.now();
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
-//        List<Transaction> allTransactions = financialAccount.getTransactions();
-//        List<Transaction> allTransactionsFilteredByDay = allTransactions.stream()
-//                .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
-//                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-//                .toList();
-//        List<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
-//                .filter(transaction -> transaction instanceof Expense)
-//                .toList();
-//        List<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
-//                .filter(transaction -> transaction instanceof Income)
-//                .toList();
-//        double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
-//                .mapToDouble(Transaction::getPrice)
-//                .sum();
-//        double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
-//                .mapToDouble(Transaction::getPrice)
-//                .sum();
-//        Map<String, Double> expensesByCategory = expensesFilteredByDay.stream()
-//                .map(transaction -> (Expense) transaction)
-//                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
-//
-//        model.addAttribute("selectedDate", selectedDate);
-//        model.addAttribute("userEmail", financialAccount.getUserId());
-//        model.addAttribute("transactions", allTransactionsFilteredByDay);
-//        model.addAttribute("expensesByDay", expensesFilteredByDay);
-//        model.addAttribute("incomesByDay", incomesFilteredByDay);
-//        model.addAttribute("totalExpenses", totalExpensesFilteredByDay);
-//        model.addAttribute("totalIncome", totalIncomeFilteredByDay);
-//        model.addAttribute("expensesByCategory", expensesByCategory);
         List<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList();
-
         List<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .toList();
-
         List<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Income)
                 .toList();
+        double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+        double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+        Map<String, Double> expensesByCategory = expensesFilteredByDay.stream()
+                .map(transaction -> (Expense) transaction)
+                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("currentMonth", yearMonth);
@@ -92,12 +68,9 @@ public class DashboardController {
         model.addAttribute("transactions", allTransactionsFilteredByDay);
         model.addAttribute("expensesByDay", expensesFilteredByDay);
         model.addAttribute("incomesByDay", incomesFilteredByDay);
-        model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
-        model.addAttribute("totalIncome", financialAccount.getTotalIncomes());
-        model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
-        model.addAttribute("currentMonthIncome", financialAccount.getCurrentMonthIncomes());
-        model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
-        model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
+        model.addAttribute("totalExpenses", totalExpensesFilteredByDay);
+        model.addAttribute("totalIncome", totalIncomeFilteredByDay);
+        model.addAttribute("expensesByCategory", expensesByCategory);
 
         return "dashboard";
     }
