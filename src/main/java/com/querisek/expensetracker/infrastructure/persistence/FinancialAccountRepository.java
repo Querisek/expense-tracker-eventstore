@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querisek.expensetracker.domain.*;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
 import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.domain.transaction.TransactionAddedEvent;
 import com.querisek.expensetracker.domain.transaction.TransactionRemovedEvent;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,9 +30,9 @@ public class FinancialAccountRepository {
         this.objectMapper = objectMapper;
     }
 
-    public void save(FinancialAccount financialAccount) {
+    public void save(FinancialAccount financialAccount, YearMonth yearMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s", financialAccount.getUserId());
+            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), yearMonth);
             Object event = financialAccount.getUncommitedEvent();
             if(event != null) {
                 String eventType = event.getClass().getSimpleName();
@@ -38,15 +40,28 @@ public class FinancialAccountRepository {
                 EventData eventData = EventData.builderAsJson(eventType, data).build();
                 eventStoreDBClient.appendToStream(streamName, eventData).get();
             }
+            YearMonth now = YearMonth.now();
+            if(yearMonth.equals(now) && isFirstTransactionOfMonth(streamName)) {
+                createSnapshot(financialAccount, yearMonth.minusMonths(1));
+            }
         } catch (Exception e) {
             throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
         }
     }
 
-    public FinancialAccount buildFinancialAccount(String userId) {
+    public FinancialAccount buildFinancialAccount(String userId, YearMonth yearMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s", userId);
+            String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
             FinancialAccount financialAccount = new FinancialAccount(userId);
+            YearMonth previousMonth = yearMonth.minusMonths(1);
+            MonthlySnapshot snapshot = loadLastSnapshot(userId, previousMonth);
+            if(snapshot != null) {
+                financialAccount.loadFromSnapshot(
+                        snapshot.getTotalExpenses(),
+                        snapshot.getTotalIncomes(),
+                        snapshot.getExpensesByCategory()
+                );
+            }
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
                     .fromStart();
@@ -83,12 +98,63 @@ public class FinancialAccountRepository {
                 }
             } catch(ExecutionException e) {
                 if (!(e.getCause() instanceof StreamNotFoundException)) {
-                    throw new ExecutionException(e);
+                    // CHANGE THIS ASAP
+                    throw e;
                 }
             }
             return financialAccount;
         } catch(Exception e) {
             throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
+        }
+    }
+
+    private boolean isFirstTransactionOfMonth(String streamName) throws Exception {
+        ReadStreamOptions options = ReadStreamOptions.get()
+                .maxCount(2)
+                .fromStart();
+        ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
+        return result.getEvents().size() == 1;
+    }
+
+    private void createSnapshot(FinancialAccount account, YearMonth yearMonth) {
+        MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(account, yearMonth);
+        String streamName = String.format("FinancialAccount-%s-%s", account.getUserId(), yearMonth);
+        try {
+            EventData snapshotEvent = EventData.builderAsJson(
+                    "MonthlySnapshotEvent",
+                    objectMapper.writeValueAsBytes(snapshot)
+            ).build();
+            eventStoreDBClient.appendToStream(streamName, snapshotEvent).get();
+        } catch (Exception e) {
+            throw new RuntimeException("Nie udalo sie zapisac snapshota.", e);
+        }
+    }
+
+    private MonthlySnapshot loadLastSnapshot(String userId, YearMonth yearMonth) {
+        try {
+            String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
+            ReadStreamOptions options = ReadStreamOptions.get()
+                    .backwards()
+                    .maxCount(1);
+            try {
+                ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
+                if (!result.getEvents().isEmpty()) {
+                    ResolvedEvent lastEvent = result.getEvents().get(0);
+                    if (lastEvent.getEvent().getEventType().equals("MonthlySnapshotEvent")) {
+                        return objectMapper.readValue(
+                                lastEvent.getEvent().getEventData(),
+                                MonthlySnapshot.class
+                        );
+                    }
+                }
+            } catch (ExecutionException e) {
+                if (!(e.getCause() instanceof StreamNotFoundException)) {
+                    throw e;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Nie udalo sie wczytac snapshota.", e);
         }
     }
 }

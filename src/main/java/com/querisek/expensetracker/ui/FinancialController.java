@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.UUID;
 
 @Controller
@@ -50,14 +52,14 @@ public class FinancialController {
             return "redirect:" + httpRequest.getHeader("Referer");
         }
 
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getExpenseCreatedAt()));
         financialAccount.addExpense(
                 request.getExpenseCategory(),
                 request.getExpenseDescription(),
                 request.getPrice(),
                 request.getExpenseCreatedAt()
         );
-        financialAccountRepository.save(financialAccount);
+        financialAccountRepository.save(financialAccount, YearMonth.from(request.getExpenseCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -85,13 +87,13 @@ public class FinancialController {
             redirectAttributes.addAttribute("dateInvalid", dateValidation.getMessage());
             return "redirect:" + httpRequest.getHeader("Referer");
         }
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getIncomeCreatedAt()));
         financialAccount.addIncome(
                 request.getIncomeDescription(),
                 request.getPrice(),
                 request.getIncomeCreatedAt()
         );
-        financialAccountRepository.save(financialAccount);
+        financialAccountRepository.save(financialAccount, YearMonth.from(request.getIncomeCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -102,10 +104,11 @@ public class FinancialController {
     @GetMapping("/transactions/delete/{id}")
     public String deleteTransaction(@PathVariable UUID id,
                                     @AuthenticationPrincipal UserDetails userDetails,
+                                    @RequestParam LocalDate transactionDate,
                                     HttpServletRequest httpRequest) {
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(transactionDate));
         financialAccount.removeTransaction(id);
-        financialAccountRepository.save(financialAccount);
+        financialAccountRepository.save(financialAccount, YearMonth.from(transactionDate));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
