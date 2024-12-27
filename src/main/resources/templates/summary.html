@@ -157,7 +157,7 @@
                   <td>
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</span>
-                      <a th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
+                      <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
                          class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
                         <i class="bi bi-x-square"></i>
@@ -177,7 +177,7 @@
                   <td>
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</span>
-                      <a th:href="@{/transactions/delete/{id}(id=${income.id}, transactionDate=${income.createdAt})}"
+                      <a th:if="${#temporals.year(income.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(income.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${income.id}, transactionDate=${income.createdAt})}"
                          class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten przychód?')">
                         <i class="bi bi-x-square"></i>

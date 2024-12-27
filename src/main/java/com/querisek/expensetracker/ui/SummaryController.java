@@ -40,31 +40,7 @@ public class SummaryController {
             yearMonth = YearMonth.now();
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
-//        List<Transaction> allTransactions = financialAccount.getTransactions();
-//        List<Transaction> allExpenses = allTransactions.stream()
-//                .filter(transaction -> transaction instanceof Expense)
-//                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-//                .toList();
-//        List<Transaction> allIncomes = allTransactions.stream()
-//                .filter(transaction -> transaction instanceof Income)
-//                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-//                .toList();
-//        double totalExpenses = allExpenses.stream()
-//                .mapToDouble(Transaction::getPrice)
-//                .sum();
-//        double totalIncomes = allIncomes.stream()
-//                .mapToDouble(Transaction::getPrice)
-//                .sum();
-//        Map<String, Double> expensesByCategory = allExpenses.stream()
-//                .map(transaction -> (Expense) transaction)
-//                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
-//
-//        model.addAttribute("userEmail", financialAccount.getUserId());
-//        model.addAttribute("allExpenses", allExpenses);
-//        model.addAttribute("allIncomes", allIncomes);
-//        model.addAttribute("totalExpenses", totalExpenses);
-//        model.addAttribute("totalIncomes", totalIncomes);
-//        model.addAttribute("expensesByCategory", expensesByCategory);
+
         model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
@@ -80,7 +56,6 @@ public class SummaryController {
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
         model.addAttribute("currentMonthIncomes", financialAccount.getCurrentMonthIncomes());
         model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
-        model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
 
         return "summary";
     }
