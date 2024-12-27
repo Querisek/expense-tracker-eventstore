@@ -67,7 +67,7 @@ public class FinancialAccountRepository {
                 ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
                 if(!result.getEvents().isEmpty()) {
                     ResolvedEvent firstEvent = result.getEvents().get(0);
-                    if(firstEvent.getEvent().getEventType().equals("PreviousMonthSummary")) {
+                    if(firstEvent.getEvent().getEventType().equals("PreviousMonthSummaryEvent")) {
                         MonthlySnapshot snapshot = objectMapper.readValue(firstEvent.getEvent().getEventData(), MonthlySnapshot.class);
                         financialAccount.loadFromSnapshot(
                                 snapshot.getTotalExpenses(),
@@ -81,7 +81,7 @@ public class FinancialAccountRepository {
                         .fromStart();
                 result = eventStoreDBClient.readStream(streamName, options).get();
                 for(ResolvedEvent resolvedEvent : result.getEvents()) {
-                    if (!resolvedEvent.getEvent().getEventType().equals("PreviousMonthSummary")) {
+                    if (!resolvedEvent.getEvent().getEventType().equals("PreviousMonthSummaryEvent")) {
                         String eventBody = new String(resolvedEvent.getEvent().getEventData(), StandardCharsets.UTF_8);
                         String eventType = resolvedEvent.getEvent().getEventType();
                         switch (eventType) {

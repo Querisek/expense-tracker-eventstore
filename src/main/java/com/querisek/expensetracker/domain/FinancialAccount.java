@@ -84,22 +84,22 @@ public class FinancialAccount {
 
     public double getCurrentMonthExpenses() {
         return transactions.stream()
-                .filter(t -> t instanceof Expense)
+                .filter(transaction -> transaction instanceof Expense)
                 .mapToDouble(Transaction::getPrice)
                 .sum();
     }
 
     public double getCurrentMonthIncomes() {
         return transactions.stream()
-                .filter(t -> t instanceof Income)
+                .filter(transaction -> transaction instanceof Income)
                 .mapToDouble(Transaction::getPrice)
                 .sum();
     }
 
     public Map<String, Double> getCurrentMonthExpensesByCategory() {
         return transactions.stream()
-                .filter(t -> t instanceof Expense)
-                .map(t -> (Expense) t)
+                .filter(transaction -> transaction instanceof Expense)
+                .map(transaction -> (Expense) transaction)
                 .collect(Collectors.groupingBy(
                         Expense::getCategory,
                         Collectors.summingDouble(Transaction::getPrice)

@@ -68,11 +68,11 @@ public class SummaryController {
         model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
-                .filter(t -> t instanceof Expense)
+                .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList());
         model.addAttribute("allIncomes", financialAccount.getTransactions().stream()
-                .filter(t -> t instanceof Income)
+                .filter(transaction -> transaction instanceof Income)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList());
         model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
