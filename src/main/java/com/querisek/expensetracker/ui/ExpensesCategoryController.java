@@ -56,12 +56,12 @@ public class ExpensesCategoryController {
         model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
-                .filter(t -> t instanceof Expense)
+                .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList());
-        model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
+        //model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
-        model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
+       // model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
         model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
 
         return "expenses";
