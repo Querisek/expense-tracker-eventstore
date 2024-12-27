@@ -37,31 +37,14 @@ public class ExpensesCategoryController {
             yearMonth = YearMonth.now();
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
-//        List<Transaction> allTransactions = financialAccount.getTransactions();
-//        List<Transaction> allExpenses = allTransactions.stream()
-//                .filter(transaction -> transaction instanceof Expense)
-//                .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-//                .toList();
-//        double totalExpenses = allExpenses.stream()
-//                .mapToDouble(Transaction::getPrice)
-//                .sum();
-//        Map<String, Double> expensesByCategory = allExpenses.stream()
-//                .map(transaction -> (Expense) transaction)
-//                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
-//
-//        model.addAttribute("userEmail", financialAccount.getUserId());
-//        model.addAttribute("allExpenses", allExpenses);
-//        model.addAttribute("totalExpenses", totalExpenses);
-//        model.addAttribute("expensesByCategory", expensesByCategory);
+
         model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList());
-        //model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
-       // model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
         model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
 
         return "expenses";
