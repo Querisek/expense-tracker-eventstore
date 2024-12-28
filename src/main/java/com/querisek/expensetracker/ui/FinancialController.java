@@ -106,9 +106,11 @@ public class FinancialController {
                                     @AuthenticationPrincipal UserDetails userDetails,
                                     @RequestParam LocalDate transactionDate,
                                     HttpServletRequest httpRequest) {
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(transactionDate));
-        financialAccount.removeTransaction(id);
-        financialAccountRepository.save(financialAccount, YearMonth.from(transactionDate));
+        if(YearMonth.from(transactionDate).equals(YearMonth.now())) {
+            FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(transactionDate));
+            financialAccount.removeTransaction(id);
+            financialAccountRepository.save(financialAccount, YearMonth.from(transactionDate));
+        }
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {

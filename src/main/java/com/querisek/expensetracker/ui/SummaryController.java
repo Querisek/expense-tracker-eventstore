@@ -40,6 +40,7 @@ public class SummaryController {
             yearMonth = YearMonth.now();
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
+        FinancialAccount currentFinancialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.now());
 
         model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
@@ -51,11 +52,11 @@ public class SummaryController {
                 .filter(transaction -> transaction instanceof Income)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList());
-        model.addAttribute("totalExpenses", financialAccount.getTotalExpenses());
-        model.addAttribute("totalIncomes", financialAccount.getTotalIncomes());
+        model.addAttribute("totalExpenses", currentFinancialAccount.getTotalExpenses());
+        model.addAttribute("totalIncomes", currentFinancialAccount.getTotalIncomes());
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
         model.addAttribute("currentMonthIncomes", financialAccount.getCurrentMonthIncomes());
-        model.addAttribute("expensesByCategory", financialAccount.getTotalExpensesByCategory());
+        model.addAttribute("expensesByCategory", currentFinancialAccount.getTotalExpensesByCategory());
 
         return "summary";
     }
