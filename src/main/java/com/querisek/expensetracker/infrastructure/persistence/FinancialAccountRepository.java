@@ -2,23 +2,15 @@ package com.querisek.expensetracker.infrastructure.persistence;
 
 import com.eventstore.dbclient.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querisek.expensetracker.domain.*;
-import com.querisek.expensetracker.domain.expense.Expense;
-import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
-import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.domain.transaction.TransactionAddedEvent;
 import com.querisek.expensetracker.domain.transaction.TransactionRemovedEvent;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Repository
 public class FinancialAccountRepository {

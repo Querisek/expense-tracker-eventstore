@@ -1,7 +1,5 @@
 package com.querisek.expensetracker.domain.common;
 
-import jakarta.validation.Valid;
-
 public final class Description {
     private final String value;
     private static final int MAX_LENGTH = 50;
