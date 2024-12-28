@@ -38,26 +38,80 @@
   </div>
 </nav>
 <div class="container py-4">
+  <div class="row mb-4">
+    <div class="col">
+      <form class="d-flex align-items-center gap-2" method="get" th:action="@{/transactions/summary}">
+        <input type="hidden" name="type" th:value="${param.type != null ? param.type : 'expenses'}">
+        <label>
+          <select class="form-select" name="month" onchange="this.form.submit()">
+            <option value="1" th:selected="${currentMonth.monthValue == 1}">Styczeń</option>
+            <option value="2" th:selected="${currentMonth.monthValue == 2}">Luty</option>
+            <option value="3" th:selected="${currentMonth.monthValue == 3}">Marzec</option>
+            <option value="4" th:selected="${currentMonth.monthValue == 4}">Kwiecień</option>
+            <option value="5" th:selected="${currentMonth.monthValue == 5}">Maj</option>
+            <option value="6" th:selected="${currentMonth.monthValue == 6}">Czerwiec</option>
+            <option value="7" th:selected="${currentMonth.monthValue == 7}">Lipiec</option>
+            <option value="8" th:selected="${currentMonth.monthValue == 8}">Sierpień</option>
+            <option value="9" th:selected="${currentMonth.monthValue == 9}">Wrzesień</option>
+            <option value="10" th:selected="${currentMonth.monthValue == 10}">Październik</option>
+            <option value="11" th:selected="${currentMonth.monthValue == 11}">Listopad</option>
+            <option value="12" th:selected="${currentMonth.monthValue == 12}">Grudzień</option>
+          </select>
+        </label>
+        <label>
+          <select class="form-select" name="year" onchange="this.form.submit()">
+            <option th:each="year : ${#numbers.sequence(2020, #dates.year(#dates.createNow()))}"
+                    th:value="${year}"
+                    th:text="${year}"
+                    th:selected="${currentMonth.year == year}">
+            </option>
+          </select>
+        </label>
+      </form>
+    </div>
+  </div>
   <div class="row g-4 mb-4">
-    <div class="col-md-6">
+    <div class="col-md-3">
       <div class="card border-0 shadow-sm">
         <div class="card-body py-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Całkowita wartość wydatków</h6>
-            <i class="bi bi-cash text-primary fs-4"></i>
+            <h6 class="card-subtitle text-muted">Wartość wszystkich wydatków</h6>
+            <i class="bi bi-cash text-danger fs-4"></i>
           </div>
           <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
         </div>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-3">
       <div class="card border-0 shadow-sm">
         <div class="card-body py-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Całkowita wartość przychodów</h6>
-            <i class="bi bi-wallet2 text-primary fs-4"></i>
+            <h6 class="card-subtitle text-muted">Wartość wydatków w tym miesiącu</h6>
+            <i class="bi bi-calendar-minus text-danger fs-4"></i>
+          </div>
+          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(currentMonthExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body py-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="card-subtitle text-muted">Wartość wszystkich przychodów</h6>
+            <i class="bi bi-wallet2 text-success fs-4"></i>
           </div>
           <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalIncomes, 1, 2) + ' PLN'}">0.00 PLN</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body py-4">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="card-subtitle text-muted">Wartość przychodów w tym miesiącu</h6>
+            <i class="bi bi-calendar-plus text-success fs-4"></i>
+          </div>
+          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(currentMonthIncomes, 1, 2) + ' PLN'}">0.00 PLN</h3>
         </div>
       </div>
     </div>
@@ -67,8 +121,8 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Historia wszystkich finansów</h5>
-            <form th:action="@{/transactions/summary}" method="GET" class="d-flex align-items-center">
+            <h5 class="card-title mb-0">Historia finansów w wybranym miesiącu</h5>
+            <form th:action="@{/transactions/summary(type=${param.type})}" method="GET" class="d-flex align-items-center">
               <div class="btn-group" role="group">
                 <input type="radio" class="btn-check" name="type" id="expenses" value="expenses"
                        th:checked="${param.type == null || param.type[0] == 'expenses'}" onchange="this.form.submit()" autocomplete="off">
@@ -77,6 +131,8 @@
                        th:checked="${param.type != null && param.type[0] == 'incomes'}" onchange="this.form.submit()" autocomplete="off">
                 <label class="btn btn-outline-primary btn-sm" for="incomes">Przychody</label>
               </div>
+              <input type="hidden" name="year" th:value="${param.year}">
+              <input type="hidden" name="month" th:value="${param.month}">
             </form>
           </div>
           <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
@@ -101,7 +157,7 @@
                   <td>
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</span>
-                      <a th:href="@{/transactions/delete/{id}(id=${expense.id})}"
+                      <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
                          class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
                         <i class="bi bi-x-square"></i>
@@ -121,7 +177,7 @@
                   <td>
                     <div class="d-flex justify-content-between align-items-center">
                       <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</span>
-                      <a th:href="@{/transactions/delete/{id}(id=${income.id})}"
+                      <a th:if="${#temporals.year(income.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(income.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${income.id}, transactionDate=${income.createdAt})}"
                          class="btn btn-sm"
                          onclick="return confirm('Czy na pewno chcesz usunąć ten przychód?')">
                         <i class="bi bi-x-square"></i>
@@ -140,7 +196,7 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="card-title mb-0">Wydatki według kategorii</h5>
+            <h5 class="card-title mb-0">Wszystkie wydatki według kategorii</h5>
             <i class="bi bi-pie-chart text-primary fs-4"></i>
           </div>
           <div class="mt-3">

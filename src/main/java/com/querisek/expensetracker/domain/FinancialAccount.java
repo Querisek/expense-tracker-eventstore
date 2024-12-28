@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.domain;
 
+import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
 import com.querisek.expensetracker.domain.transaction.Transaction;
@@ -7,18 +8,23 @@ import com.querisek.expensetracker.domain.transaction.TransactionAddedEvent;
 import com.querisek.expensetracker.domain.transaction.TransactionRemovedEvent;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class FinancialAccount {
     private final String userId;
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
+    private double previousMonthsTotalExpenses;
+    private double previousMonthsTotalIncomes;
+    private Map<String, Double> previousMonthsExpensesByCategory;
 
     public FinancialAccount(String userId) {
         this.userId = userId;
         this.transactions = new ArrayList<>();
+        this.previousMonthsTotalExpenses = 0.0;
+        this.previousMonthsTotalIncomes = 0.0;
+        this.previousMonthsExpensesByCategory = new HashMap<>();
     }
 
     public void addExpense(String category, String description, double price, LocalDate date) {
@@ -68,6 +74,55 @@ public class FinancialAccount {
             );
             transactions.removeIf(transaction -> transaction.getId().equals(transactionId));
         }
+    }
+
+    public void loadFromSnapshot(double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
+        this.previousMonthsTotalExpenses = totalExpenses;
+        this.previousMonthsTotalIncomes = totalIncomes;
+        this.previousMonthsExpensesByCategory = new HashMap<>(expensesByCategory);
+    }
+
+    public double getCurrentMonthExpenses() {
+        return transactions.stream()
+                .filter(transaction -> transaction instanceof Expense)
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+    }
+
+    public double getCurrentMonthIncomes() {
+        return transactions.stream()
+                .filter(transaction -> transaction instanceof Income)
+                .mapToDouble(Transaction::getPrice)
+                .sum();
+    }
+
+    public Map<String, Double> getCurrentMonthExpensesByCategory() {
+        return transactions.stream()
+                .filter(transaction -> transaction instanceof Expense)
+                .map(transaction -> (Expense) transaction)
+                .collect(Collectors.groupingBy(
+                        Expense::getCategory,
+                        Collectors.summingDouble(Transaction::getPrice)
+                ));
+    }
+
+    public double getTotalExpenses() {
+        return getCurrentMonthExpenses() + previousMonthsTotalExpenses;
+    }
+
+    public double getTotalIncomes() {
+        return getCurrentMonthIncomes() + previousMonthsTotalIncomes;
+    }
+
+    public Map<String, Double> getTotalExpensesByCategory() {
+        Map<String, Double> currentMonthCategories = getCurrentMonthExpensesByCategory();
+        Map<String, Double> totalCategories = new HashMap<>(previousMonthsExpensesByCategory);
+
+        currentMonthCategories.forEach((category, amount) ->
+                totalCategories.merge(category, amount, Double::sum)
+        );
+
+        return totalCategories;
     }
 
     public String getUserId() {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,15 @@ public class DashboardController {
     public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                 @AuthenticationPrincipal UserDetails userDetails,
                                 Model model) {
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
+        YearMonth yearMonth;
+        if(date != null) {
+            yearMonth = YearMonth.from(date);
+        } else {
+            yearMonth = YearMonth.now();
+        }
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
-        List<Transaction> allTransactions = financialAccount.getTransactions();
-        List<Transaction> allTransactionsFilteredByDay = allTransactions.stream()
+        List<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .toList();
@@ -57,6 +63,7 @@ public class DashboardController {
                 .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
 
         model.addAttribute("selectedDate", selectedDate);
+        model.addAttribute("currentMonth", yearMonth);
         model.addAttribute("userEmail", financialAccount.getUserId());
         model.addAttribute("transactions", allTransactionsFilteredByDay);
         model.addAttribute("expensesByDay", expensesFilteredByDay);

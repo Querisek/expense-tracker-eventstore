@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.YearMonth;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -25,24 +26,26 @@ public class ExpensesCategoryController {
     }
 
     @GetMapping
-    public String showExpenseCategoriesToUser(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername());
-        List<Transaction> allTransactions = financialAccount.getTransactions();
-        List<Transaction> allExpenses = allTransactions.stream()
+    public String showExpenseCategoriesToUser(@AuthenticationPrincipal UserDetails userDetails,
+                                              @RequestParam(required = false) Integer year,
+                                              @RequestParam(required = false) Integer month,
+                                              Model model) {
+        YearMonth yearMonth;
+        if(year != null && month != null) {
+            yearMonth = YearMonth.of(year, month);
+        } else {
+            yearMonth = YearMonth.now();
+        }
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
+
+        model.addAttribute("currentMonth", yearMonth);
+        model.addAttribute("userEmail", financialAccount.getUserId());
+        model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-                .toList();
-        double totalExpenses = allExpenses.stream()
-                .mapToDouble(Transaction::getPrice)
-                .sum();
-        Map<String, Double> expensesByCategory = allExpenses.stream()
-                .map(transaction -> (Expense) transaction)
-                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
-
-        model.addAttribute("userEmail", financialAccount.getUserId());
-        model.addAttribute("allExpenses", allExpenses);
-        model.addAttribute("totalExpenses", totalExpenses);
-        model.addAttribute("expensesByCategory", expensesByCategory);
+                .toList());
+        model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
+        model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
 
         return "expenses";
     }
