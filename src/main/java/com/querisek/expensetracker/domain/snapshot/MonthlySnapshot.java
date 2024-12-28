@@ -23,16 +23,12 @@ public class MonthlySnapshot {
     }
 
     public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth month) {
-        double monthlyTotalExpenses = account.getCurrentMonthExpenses();
-        double monthlyTotalIncomes = account.getCurrentMonthIncomes();
-        Map<String, Double> expensesByCategory = account.getCurrentMonthExpensesByCategory();
-
         return new MonthlySnapshot(
                 account.getUserId(),
                 month,
-                monthlyTotalExpenses,
-                monthlyTotalIncomes,
-                expensesByCategory
+                account.getTotalExpenses(),
+                account.getTotalIncomes(),
+                account.getTotalExpensesByCategory()
         );
     }
 

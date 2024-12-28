@@ -37,7 +37,7 @@ public class FinancialAccountRepository {
             if(event != null) {
                 if(isFirstEventInMonth(streamName)) {
                     YearMonth previousMonth = currentMonth.minusMonths(1);
-                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), currentMonth.minusMonths(1));
+                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), previousMonth);
                     FinancialAccount accountFromPreviousMonth = buildFinancialAccount(financialAccount.getUserId(), previousMonth);
                     MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(accountFromPreviousMonth, previousMonth);
                     EventData snapshotEvent = EventData.builderAsJson("PreviousMonthSummaryEvent", objectMapper.writeValueAsBytes(snapshot)).build();
