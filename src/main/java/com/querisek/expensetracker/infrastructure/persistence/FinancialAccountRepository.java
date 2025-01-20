@@ -105,8 +105,7 @@ public class FinancialAccountRepository {
                 }
             } catch(ExecutionException e) {
                 if (!(e.getCause() instanceof StreamNotFoundException)) {
-                    // CHANGE THIS ASAP
-                    throw e;
+                    throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
                 }
             }
             return financialAccount;

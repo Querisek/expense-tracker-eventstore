@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.domain.snapshot;
 
+import com.google.common.collect.ImmutableMap;
 import com.querisek.expensetracker.domain.FinancialAccount;
 
 import java.time.YearMonth;
@@ -49,6 +50,6 @@ public class MonthlySnapshot {
     }
 
     public Map<String, Double> getExpensesByCategory() {
-        return expensesByCategory;
+        return ImmutableMap.copyOf(expensesByCategory);
     }
 }

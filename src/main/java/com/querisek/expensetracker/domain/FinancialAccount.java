@@ -1,5 +1,7 @@
 package com.querisek.expensetracker.domain;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
 import com.querisek.expensetracker.domain.transaction.Transaction;
@@ -10,7 +12,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FinancialAccount {
+public final class FinancialAccount {
     private final String userId;
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
@@ -113,7 +115,7 @@ public class FinancialAccount {
         return getCurrentMonthIncomes() + previousMonthsTotalIncomes;
     }
 
-    public Map<String, Double> getTotalExpensesByCategory() {
+    public ImmutableMap<String, Double> getTotalExpensesByCategory() {
         Map<String, Double> currentMonthCategories = getCurrentMonthExpensesByCategory();
         Map<String, Double> totalCategories = new HashMap<>(previousMonthsExpensesByCategory);
 
@@ -121,15 +123,15 @@ public class FinancialAccount {
                 totalCategories.merge(category, amount, Double::sum)
         );
 
-        return totalCategories;
+        return ImmutableMap.copyOf(totalCategories);
     }
 
     public String getUserId() {
         return userId;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public ImmutableList<Transaction> getTransactions() {
+        return ImmutableList.copyOf(transactions);
     }
 
     public Object getUncommitedEvent() {

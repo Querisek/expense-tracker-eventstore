@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.ui;
 
+import com.google.common.collect.ImmutableList;
 import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.transaction.Transaction;
@@ -42,7 +43,7 @@ public class ExpensesCategoryController {
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-                .toList());
+                .collect(ImmutableList.toImmutableList()));
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
         model.addAttribute("currentMonthExpensesByCategory", financialAccount.getCurrentMonthExpensesByCategory());
 

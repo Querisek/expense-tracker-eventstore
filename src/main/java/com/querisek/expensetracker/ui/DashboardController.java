@@ -1,5 +1,7 @@
 package com.querisek.expensetracker.ui;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
@@ -16,10 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -42,25 +41,25 @@ public class DashboardController {
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
-        List<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()
+        ImmutableList<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction.getCreatedAt().equals(selectedDate))
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-                .toList();
-        List<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
+                .collect(ImmutableList.toImmutableList());
+        ImmutableList<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Expense)
-                .toList();
-        List<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
+                .collect(ImmutableList.toImmutableList());
+        ImmutableList<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Income)
-                .toList();
+                .collect(ImmutableList.toImmutableList());
         double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
         double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
-        Map<String, Double> expensesByCategory = expensesFilteredByDay.stream()
+        ImmutableMap<String, Double> expensesByCategory = expensesFilteredByDay.stream()
                 .map(transaction -> (Expense) transaction)
-                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
+                .collect(ImmutableMap.toImmutableMap(Expense::getCategory, Transaction::getPrice, Double::sum));
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("currentMonth", yearMonth);
