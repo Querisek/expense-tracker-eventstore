@@ -63,7 +63,7 @@ public class DashboardController {
 
         model.addAttribute("selectedDate", selectedDate);
         model.addAttribute("currentMonth", yearMonth);
-        model.addAttribute("userEmail", financialAccount.getUserId());
+        model.addAttribute("userEmail", financialAccount.getUserEmail());
         model.addAttribute("transactions", allTransactionsFilteredByDay);
         model.addAttribute("expensesByDay", expensesFilteredByDay);
         model.addAttribute("incomesByDay", incomesFilteredByDay);

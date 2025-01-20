@@ -7,7 +7,7 @@ import java.time.YearMonth;
 import java.util.Map;
 
 public class MonthlySnapshot {
-    private String userId;
+    private String userEmail;
     private YearMonth month;
     private double totalExpenses;
     private double totalIncomes;
@@ -15,8 +15,8 @@ public class MonthlySnapshot {
 
     public MonthlySnapshot() {}
 
-    public MonthlySnapshot(String userId, YearMonth month, double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
-        this.userId = userId;
+    public MonthlySnapshot(String userEmail, YearMonth month, double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
+        this.userEmail = userEmail;
         this.month = month;
         this.totalExpenses = totalExpenses;
         this.totalIncomes = totalIncomes;
@@ -25,7 +25,7 @@ public class MonthlySnapshot {
 
     public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth month) {
         return new MonthlySnapshot(
-                account.getUserId(),
+                account.getUserEmail(),
                 month,
                 account.getTotalExpenses(),
                 account.getTotalIncomes(),
@@ -33,8 +33,8 @@ public class MonthlySnapshot {
         );
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public YearMonth getMonth() {

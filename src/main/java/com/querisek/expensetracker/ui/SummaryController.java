@@ -41,7 +41,7 @@ public class SummaryController {
         FinancialAccount currentFinancialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.now());
 
         model.addAttribute("currentMonth", yearMonth);
-        model.addAttribute("userEmail", financialAccount.getUserId());
+        model.addAttribute("userEmail", financialAccount.getUserEmail());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())

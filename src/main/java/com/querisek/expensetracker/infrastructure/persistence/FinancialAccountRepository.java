@@ -24,13 +24,13 @@ public class FinancialAccountRepository {
 
     public void save(FinancialAccount financialAccount, YearMonth currentMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), currentMonth);
+            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserEmail(), currentMonth);
             Object event = financialAccount.getUncommitedEvent();
             if(event != null) {
                 if(isFirstEventInMonth(streamName)) {
                     YearMonth previousMonth = currentMonth.minusMonths(1);
-                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), previousMonth);
-                    FinancialAccount accountFromPreviousMonth = buildFinancialAccount(financialAccount.getUserId(), previousMonth);
+                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserEmail(), previousMonth);
+                    FinancialAccount accountFromPreviousMonth = buildFinancialAccount(financialAccount.getUserEmail(), previousMonth);
                     MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(accountFromPreviousMonth, previousMonth);
                     EventData snapshotEvent = EventData.builderAsJson("PreviousMonthSummaryEvent", objectMapper.writeValueAsBytes(snapshot)).build();
                     EventData monthClosedEvent = EventData.builderAsJson("MonthClosedEvent", objectMapper.writeValueAsBytes(snapshot)).build();
@@ -47,10 +47,10 @@ public class FinancialAccountRepository {
         }
     }
 
-    public FinancialAccount buildFinancialAccount(String userId, YearMonth yearMonth) {
+    public FinancialAccount buildFinancialAccount(String userEmail, YearMonth yearMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
-            FinancialAccount financialAccount = new FinancialAccount(userId);
+            String streamName = String.format("FinancialAccount-%s-%s", userEmail, yearMonth);
+            FinancialAccount financialAccount = new FinancialAccount(userEmail);
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
                     .fromStart()

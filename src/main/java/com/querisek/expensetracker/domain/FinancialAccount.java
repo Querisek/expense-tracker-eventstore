@@ -13,15 +13,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class FinancialAccount {
-    private final String userId;
+    private final String userEmail;
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
     private double previousMonthsTotalExpenses;
     private double previousMonthsTotalIncomes;
     private Map<String, Double> previousMonthsExpensesByCategory;
 
-    public FinancialAccount(String userId) {
-        this.userId = userId;
+    public FinancialAccount(String userEmail) {
+        this.userEmail = userEmail;
         this.transactions = new ArrayList<>();
         this.previousMonthsTotalExpenses = 0.0;
         this.previousMonthsTotalIncomes = 0.0;
@@ -32,7 +32,7 @@ public final class FinancialAccount {
         UUID transactionId = UUID.randomUUID();
         uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
-                userId,
+                userEmail,
                 "EXPENSE",
                 category,
                 description,
@@ -41,7 +41,7 @@ public final class FinancialAccount {
         );
     }
 
-    public void addExpenseFromEvent(UUID id,String category, String description, double price, LocalDate date) {
+    public void addExpenseFromEvent(UUID id, String category, String description, double price, LocalDate date) {
         Transaction expense = new Expense(id, category, description, price, date);
         transactions.add(expense);
     }
@@ -50,7 +50,7 @@ public final class FinancialAccount {
         UUID transactionId = UUID.randomUUID();
         uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
-                userId,
+                userEmail,
                 "INCOME",
                 null,
                 description,
@@ -70,7 +70,7 @@ public final class FinancialAccount {
         if(transactionExists) {
             uncommitedEvent = new TransactionRemovedEvent(
                     transactionId,
-                    userId,
+                    userEmail,
                     LocalDate.now()
             );
             transactions.removeIf(transaction -> transaction.getId().equals(transactionId));
@@ -126,8 +126,8 @@ public final class FinancialAccount {
         return ImmutableMap.copyOf(totalCategories);
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public ImmutableList<Transaction> getTransactions() {

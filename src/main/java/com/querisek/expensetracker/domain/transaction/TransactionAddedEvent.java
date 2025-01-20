@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class TransactionAddedEvent {
     private UUID transactionId;
-    private String userId;
+    private String userEmail;
     private String type;
     private Category category;
     private Description description;
@@ -19,9 +19,9 @@ public class TransactionAddedEvent {
 
     public TransactionAddedEvent() {}
 
-    public TransactionAddedEvent(UUID transactionId, String userId, String type, String category, String description, double price, LocalDate createdAt) {
+    public TransactionAddedEvent(UUID transactionId, String userEmail, String type, String category, String description, double price, LocalDate createdAt) {
         this.transactionId = transactionId;
-        this.userId = userId;
+        this.userEmail = userEmail;
         this.type = type;
         this.category = new Category(category);
         this.description = new Description(description);
@@ -37,12 +37,12 @@ public class TransactionAddedEvent {
         this.transactionId = transactionId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getType() {
