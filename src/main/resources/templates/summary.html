@@ -10,7 +10,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="/">Dzisiejszy przegląd</a>
+    <a class="navbar-brand fw-bold" href="/">Finanse dnia</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -60,7 +60,7 @@
         </label>
         <label>
           <select class="form-select" name="year" onchange="this.form.submit()">
-            <option th:each="year : ${#numbers.sequence(2020, #dates.year(#dates.createNow()))}"
+            <option th:each="year : ${#numbers.sequence(2024, #dates.year(#dates.createNow()))}"
                     th:value="${year}"
                     th:text="${year}"
                     th:selected="${currentMonth.year == year}">

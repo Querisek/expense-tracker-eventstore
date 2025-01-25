@@ -10,7 +10,7 @@
 <body class="bg-light">
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container">
-    <a class="navbar-brand fw-bold" href="/">Dzisiejszy przegląd</a>
+    <a class="navbar-brand fw-bold" href="/">Finanse dnia</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -350,7 +350,7 @@
           </div>
           <div class="mb-3">
 
-            <label for="incomeDate" class="form-label">Data wydatku</label>
+            <label for="incomeDate" class="form-label">Data przychodu</label>
             <input type="date" class="form-control" id="incomeDate" name="incomeCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
         </form>
