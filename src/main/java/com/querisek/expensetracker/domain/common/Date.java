@@ -6,7 +6,6 @@ public final class Date {
     private final LocalDate value;
 
     public Date(LocalDate value) {
-        validate(value);
         this.value = value;
     }
 

@@ -5,7 +5,6 @@ public final class Description {
     private static final int MAX_LENGTH = 50;
 
     public Description(String value) {
-        validate(value);
         this.value = value;
     }
 

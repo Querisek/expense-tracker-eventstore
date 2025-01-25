@@ -7,7 +7,6 @@ public final class Category {
     private static final ImmutableSet<String> VALID_CATEGORIES = ImmutableSet.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
 
     public Category(String value) {
-        validate(value);
         this.value = value;
     }
 
