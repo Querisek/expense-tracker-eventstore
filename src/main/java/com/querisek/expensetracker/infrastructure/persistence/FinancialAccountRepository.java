@@ -43,7 +43,7 @@ public class FinancialAccountRepository {
                 eventStoreDBClient.appendToStream(streamName, eventData).get();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
+            throw new RuntimeException("Wystapil problem przy dodawaniu transakcji.", e);
         }
     }
 
@@ -105,12 +105,12 @@ public class FinancialAccountRepository {
                 }
             } catch(ExecutionException e) {
                 if (!(e.getCause() instanceof StreamNotFoundException)) {
-                    throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
+                    throw new RuntimeException("Wystapil problem podczas odczytywania historii transakcji konta.", e);
                 }
             }
             return financialAccount;
         } catch(Exception e) {
-            throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
+            throw new RuntimeException("Wystapil problem podczas odczytywania historii transakcji konta.", e);
         }
     }
 
@@ -125,7 +125,7 @@ public class FinancialAccountRepository {
             if (e.getCause() instanceof StreamNotFoundException) {
                 return true;
             }
-            throw new RuntimeException("Nie udalo sie sprawdzic strumienia.", e);
+            throw new RuntimeException("Wystapil problem podczas sprawdzania strumienia.", e);
         }
     }
 }
