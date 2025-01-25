@@ -96,11 +96,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteFoodExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteFoodExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -136,11 +157,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteTravelExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteTravelExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -176,11 +218,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteHealthExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteHealthExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -216,11 +279,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteEntertainmentExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteEntertainmentExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -256,11 +340,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteHomeExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteHomeExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -296,11 +401,32 @@
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
                     <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
-                    <a th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}" th:href="@{/transactions/delete/{id}(id=${expense.id}, transactionDate=${expense.createdAt})}"
-                       class="btn btn-sm"
-                       onclick="return confirm('Czy na pewno chcesz usunąć ten wydatek?')">
+                    <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
+                            class="btn btn-sm"
+                            th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
+                            data-bs-toggle="modal">
                       <i class="bi bi-x-square"></i>
-                    </a>
+                    </button>
+                  </div>
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteExpenseModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteExpenseModalLabel">Usuwanie wydatku</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          Czy na pewno chcesz usunąć ten wydatek?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                          <form th:action="@{/transactions/delete/{id}(id=${expense.id})}" method="GET" class="d-inline">
+                            <input type="hidden" name="transactionDate" th:value="${#temporals.format(expense.createdAt, 'yyyy-MM-dd')}">
+                            <button type="submit" class="btn btn-danger">Usuń</button>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </td>
               </tr>
