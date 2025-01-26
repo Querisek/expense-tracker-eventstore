@@ -36,6 +36,7 @@ public class ExpensesCategoryController {
         } else {
             yearMonth = YearMonth.now();
         }
+        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
 
         model.addAttribute("currentMonth", yearMonth);

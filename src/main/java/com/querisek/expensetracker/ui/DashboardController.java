@@ -39,6 +39,7 @@ public class DashboardController {
         } else {
             yearMonth = YearMonth.now();
         }
+        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
         ImmutableList<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()

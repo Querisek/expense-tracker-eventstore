@@ -37,6 +37,7 @@ public class SummaryController {
         } else {
             yearMonth = YearMonth.now();
         }
+        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         FinancialAccount currentFinancialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.now());
 
