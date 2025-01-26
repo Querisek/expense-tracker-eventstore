@@ -86,7 +86,7 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body py-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Wartość wydatków w tym miesiącu</h6>
+            <h6 class="card-subtitle text-muted">Wartość wydatków w wybranym miesiącu</h6>
             <i class="bi bi-calendar-minus text-danger fs-4"></i>
           </div>
           <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(currentMonthExpenses, 1, 2) + ' PLN'}">0.00 PLN</h3>
@@ -100,7 +100,7 @@
             <h6 class="card-subtitle text-muted">Wartość wszystkich przychodów</h6>
             <i class="bi bi-wallet2 text-success fs-4"></i>
           </div>
-          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalIncomes, 1, 2) + ' PLN'}">0.00 PLN</h3>
+          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(totalIncome, 1, 2) + ' PLN'}">0.00 PLN</h3>
         </div>
       </div>
     </div>
@@ -108,10 +108,10 @@
       <div class="card border-0 shadow-sm">
         <div class="card-body py-4">
           <div class="d-flex justify-content-between align-items-center mb-2">
-            <h6 class="card-subtitle text-muted">Wartość przychodów w tym miesiącu</h6>
+            <h6 class="card-subtitle text-muted">Wartość przychodów w wybranym miesiącu</h6>
             <i class="bi bi-calendar-plus text-success fs-4"></i>
           </div>
-          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(currentMonthIncomes, 1, 2) + ' PLN'}">0.00 PLN</h3>
+          <h3 class="card-title mb-0" th:text="${#numbers.formatDecimal(currentMonthIncome, 1, 2) + ' PLN'}">0.00 PLN</h3>
         </div>
       </div>
     </div>
@@ -127,9 +127,9 @@
                 <input type="radio" class="btn-check" name="type" id="expenses" value="expenses"
                        th:checked="${param.type == null || param.type[0] == 'expenses'}" onchange="this.form.submit()" autocomplete="off">
                 <label class="btn btn-outline-primary btn-sm" for="expenses">Wydatki</label>
-                <input type="radio" class="btn-check" name="type" id="incomes" value="incomes"
-                       th:checked="${param.type != null && param.type[0] == 'incomes'}" onchange="this.form.submit()" autocomplete="off">
-                <label class="btn btn-outline-primary btn-sm" for="incomes">Przychody</label>
+                <input type="radio" class="btn-check" name="type" id="income" value="income"
+                       th:checked="${param.type != null && param.type[0] == 'income'}" onchange="this.form.submit()" autocomplete="off">
+                <label class="btn btn-outline-primary btn-sm" for="income">Przychody</label>
               </div>
               <input type="hidden" name="year" th:value="${param.year}">
               <input type="hidden" name="month" th:value="${param.month}">
@@ -187,11 +187,11 @@
                   </td>
                 </tr>
               </th:block>
-              <th:block th:if="${param.type != null && param.type[0] == 'incomes'}">
-                <tr th:if="${#lists.isEmpty(allIncomes)}">
+              <th:block th:if="${param.type != null && param.type[0] == 'income'}">
+                <tr th:if="${#lists.isEmpty(allIncome)}">
                   <td colspan="4" class="text-center">Brak przychodów</td>
                 </tr>
-                <tr th:each="income : ${allIncomes}">
+                <tr th:each="income : ${allIncome}">
                   <td th:text="${#temporals.format(income.createdAt, 'dd-MM-yyyy')}">Data</td>
                   <td>Przychód</td>
                   <td th:text="${income.description}">Opis</td>

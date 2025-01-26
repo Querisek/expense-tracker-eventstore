@@ -46,14 +46,14 @@ public class SummaryController {
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .collect(ImmutableList.toImmutableList()));
-        model.addAttribute("allIncomes", financialAccount.getTransactions().stream()
+        model.addAttribute("allIncome", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Income)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
                 .collect(ImmutableList.toImmutableList()));
         model.addAttribute("totalExpenses", currentFinancialAccount.getTotalExpenses());
-        model.addAttribute("totalIncomes", currentFinancialAccount.getTotalIncomes());
+        model.addAttribute("totalIncome", currentFinancialAccount.getTotalIncome());
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
-        model.addAttribute("currentMonthIncomes", financialAccount.getCurrentMonthIncomes());
+        model.addAttribute("currentMonthIncome", financialAccount.getCurrentMonthIncome());
         model.addAttribute("expensesByCategory", currentFinancialAccount.getTotalExpensesByCategory());
 
         return "summary";

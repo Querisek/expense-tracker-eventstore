@@ -17,14 +17,14 @@ public final class FinancialAccount {
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
     private double previousMonthsTotalExpenses;
-    private double previousMonthsTotalIncomes;
+    private double previousMonthsTotalIncome;
     private Map<String, Double> previousMonthsExpensesByCategory;
 
     public FinancialAccount(String userEmail) {
         this.userEmail = userEmail;
         this.transactions = new ArrayList<>();
         this.previousMonthsTotalExpenses = 0.0;
-        this.previousMonthsTotalIncomes = 0.0;
+        this.previousMonthsTotalIncome = 0.0;
         this.previousMonthsExpensesByCategory = new HashMap<>();
     }
 
@@ -77,9 +77,9 @@ public final class FinancialAccount {
         }
     }
 
-    public void loadFromSnapshot(double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
+    public void loadFromSnapshot(double totalExpenses, double totalIncome, Map<String, Double> expensesByCategory) {
         this.previousMonthsTotalExpenses = totalExpenses;
-        this.previousMonthsTotalIncomes = totalIncomes;
+        this.previousMonthsTotalIncome = totalIncome;
         this.previousMonthsExpensesByCategory = new HashMap<>(expensesByCategory);
     }
 
@@ -90,7 +90,7 @@ public final class FinancialAccount {
                 .sum();
     }
 
-    public double getCurrentMonthIncomes() {
+    public double getCurrentMonthIncome() {
         return transactions.stream()
                 .filter(transaction -> transaction instanceof Income)
                 .mapToDouble(Transaction::getPrice)
@@ -111,8 +111,8 @@ public final class FinancialAccount {
         return getCurrentMonthExpenses() + previousMonthsTotalExpenses;
     }
 
-    public double getTotalIncomes() {
-        return getCurrentMonthIncomes() + previousMonthsTotalIncomes;
+    public double getTotalIncome() {
+        return getCurrentMonthIncome() + previousMonthsTotalIncome;
     }
 
     public ImmutableMap<String, Double> getTotalExpensesByCategory() {

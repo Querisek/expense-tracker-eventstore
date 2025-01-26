@@ -63,7 +63,7 @@ public class FinancialAccountRepository {
                         MonthlySnapshot snapshot = objectMapper.readValue(firstEvent.getEvent().getEventData(), MonthlySnapshot.class);
                         financialAccount.loadFromSnapshot(
                                 snapshot.getTotalExpenses(),
-                                snapshot.getTotalIncomes(),
+                                snapshot.getTotalIncome(),
                                 snapshot.getExpensesByCategory()
                         );
                     }
@@ -104,7 +104,7 @@ public class FinancialAccountRepository {
                     }
                 }
             } catch(ExecutionException e) {
-                if (!(e.getCause() instanceof StreamNotFoundException)) {
+                if(!(e.getCause() instanceof StreamNotFoundException)) {
                     throw new RuntimeException("Wystapil problem podczas odczytywania historii transakcji konta.", e);
                 }
             }
@@ -121,8 +121,8 @@ public class FinancialAccountRepository {
                     .fromStart();
             ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
             return result.getEvents().isEmpty();
-        } catch (Exception e) {
-            if (e.getCause() instanceof StreamNotFoundException) {
+        } catch(Exception e) {
+            if(e.getCause() instanceof StreamNotFoundException) {
                 return true;
             }
             throw new RuntimeException("Wystapil problem podczas sprawdzania strumienia.", e);

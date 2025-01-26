@@ -8,27 +8,27 @@ import java.util.Map;
 
 public class MonthlySnapshot {
     private String userEmail;
-    private YearMonth month;
+    private YearMonth yearMonth;
     private double totalExpenses;
-    private double totalIncomes;
+    private double totalIncome;
     private Map<String, Double> expensesByCategory;
 
     public MonthlySnapshot() {}
 
-    public MonthlySnapshot(String userEmail, YearMonth month, double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
+    public MonthlySnapshot(String userEmail, YearMonth yearMonth, double totalExpenses, double totalIncome, Map<String, Double> expensesByCategory) {
         this.userEmail = userEmail;
-        this.month = month;
+        this.yearMonth = yearMonth;
         this.totalExpenses = totalExpenses;
-        this.totalIncomes = totalIncomes;
+        this.totalIncome = totalIncome;
         this.expensesByCategory = expensesByCategory;
     }
 
-    public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth month) {
+    public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth yearMonth) {
         return new MonthlySnapshot(
                 account.getUserEmail(),
-                month,
+                yearMonth,
                 account.getTotalExpenses(),
-                account.getTotalIncomes(),
+                account.getTotalIncome(),
                 account.getTotalExpensesByCategory()
         );
     }
@@ -37,16 +37,16 @@ public class MonthlySnapshot {
         return userEmail;
     }
 
-    public YearMonth getMonth() {
-        return month;
+    public YearMonth getYearMonth() {
+        return yearMonth;
     }
 
     public double getTotalExpenses() {
         return totalExpenses;
     }
 
-    public double getTotalIncomes() {
-        return totalIncomes;
+    public double getTotalIncome() {
+        return totalIncome;
     }
 
     public Map<String, Double> getExpensesByCategory() {

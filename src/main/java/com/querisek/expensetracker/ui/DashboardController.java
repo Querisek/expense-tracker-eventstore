@@ -48,13 +48,13 @@ public class DashboardController {
         ImmutableList<Transaction> expensesFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .collect(ImmutableList.toImmutableList());
-        ImmutableList<Transaction> incomesFilteredByDay = allTransactionsFilteredByDay.stream()
+        ImmutableList<Transaction> incomeFilteredByDay = allTransactionsFilteredByDay.stream()
                 .filter(transaction -> transaction instanceof Income)
                 .collect(ImmutableList.toImmutableList());
         double totalExpensesFilteredByDay = expensesFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
-        double totalIncomeFilteredByDay = incomesFilteredByDay.stream()
+        double totalIncomeFilteredByDay = incomeFilteredByDay.stream()
                 .mapToDouble(Transaction::getPrice)
                 .sum();
         ImmutableMap<String, Double> expensesByCategory = expensesFilteredByDay.stream()
@@ -66,7 +66,7 @@ public class DashboardController {
         model.addAttribute("userEmail", financialAccount.getUserEmail());
         model.addAttribute("transactions", allTransactionsFilteredByDay);
         model.addAttribute("expensesByDay", expensesFilteredByDay);
-        model.addAttribute("incomesByDay", incomesFilteredByDay);
+        model.addAttribute("incomeByDay", incomeFilteredByDay);
         model.addAttribute("totalExpenses", totalExpensesFilteredByDay);
         model.addAttribute("totalIncome", totalIncomeFilteredByDay);
         model.addAttribute("expensesByCategory", expensesByCategory);
