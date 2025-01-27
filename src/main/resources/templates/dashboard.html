@@ -22,6 +22,9 @@
         <li class="nav-item">
           <a class="nav-link" th:href="@{/transactions/expenses}"><i class="bi bi-tags"></i> Kategorie wydatków</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfZNwpc6OoEzIs6RPB62agQJKu8xaHf6APlOYQkK06syFEvbA/viewform?usp=dialog"><i class="bi bi-question-circle"></i> Kontakt z pomocą techniczną</a>
+        </li>
       </ul>
       <div class="d-flex align-items-center">
         <span class="text-light me-3" data-bs-toggle="modal" data-bs-target="#changePasswordModal" style="cursor: pointer;">
@@ -405,7 +408,6 @@
             <input type="number" class="form-control" id="incomePrice" step="0.01" min="0" name="price" required>
           </div>
           <div class="mb-3">
-
             <label for="incomeDate" class="form-label">Data przychodu</label>
             <input type="date" class="form-control" id="incomeDate" name="incomeCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
