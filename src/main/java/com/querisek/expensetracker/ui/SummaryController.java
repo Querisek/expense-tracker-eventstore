@@ -1,5 +1,6 @@
 package com.querisek.expensetracker.ui;
 
+import com.google.common.collect.ImmutableList;
 import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
@@ -15,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.YearMonth;
 import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/transactions/summary")
@@ -39,23 +37,24 @@ public class SummaryController {
         } else {
             yearMonth = YearMonth.now();
         }
+        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         FinancialAccount currentFinancialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.now());
 
         model.addAttribute("currentMonth", yearMonth);
-        model.addAttribute("userEmail", financialAccount.getUserId());
+        model.addAttribute("userEmail", financialAccount.getUserEmail());
         model.addAttribute("allExpenses", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-                .toList());
-        model.addAttribute("allIncomes", financialAccount.getTransactions().stream()
+                .collect(ImmutableList.toImmutableList()));
+        model.addAttribute("allIncome", financialAccount.getTransactions().stream()
                 .filter(transaction -> transaction instanceof Income)
                 .sorted(Comparator.comparing(Transaction::getCreatedAt).reversed())
-                .toList());
+                .collect(ImmutableList.toImmutableList()));
         model.addAttribute("totalExpenses", currentFinancialAccount.getTotalExpenses());
-        model.addAttribute("totalIncomes", currentFinancialAccount.getTotalIncomes());
+        model.addAttribute("totalIncome", currentFinancialAccount.getTotalIncome());
         model.addAttribute("currentMonthExpenses", financialAccount.getCurrentMonthExpenses());
-        model.addAttribute("currentMonthIncomes", financialAccount.getCurrentMonthIncomes());
+        model.addAttribute("currentMonthIncome", financialAccount.getCurrentMonthIncome());
         model.addAttribute("expensesByCategory", currentFinancialAccount.getTotalExpensesByCategory());
 
         return "summary";

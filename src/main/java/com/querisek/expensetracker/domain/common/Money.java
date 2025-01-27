@@ -15,7 +15,6 @@ public final class Money {
     }
 
     public Money(BigDecimal value) {
-        validate(value);
         this.value = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
     }
 

@@ -7,14 +7,14 @@ import java.util.UUID;
 
 public class TransactionRemovedEvent {
     private UUID transactionId;
-    private String userId;
+    private String userEmail;
     private Date removedAt;
 
     public TransactionRemovedEvent() {}
 
-    public TransactionRemovedEvent(UUID transactionId, String userId, LocalDate removedAt) {
+    public TransactionRemovedEvent(UUID transactionId, String userEmail, LocalDate removedAt) {
         this.transactionId = transactionId;
-        this.userId = userId;
+        this.userEmail = userEmail;
         this.removedAt = new Date(removedAt);
     }
 
@@ -26,12 +26,12 @@ public class TransactionRemovedEvent {
         this.transactionId = transactionId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public LocalDate getRemovedAt() {

@@ -1,6 +1,7 @@
 package com.querisek.expensetracker.domain;
 
-import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.querisek.expensetracker.domain.expense.Expense;
 import com.querisek.expensetracker.domain.income.Income;
 import com.querisek.expensetracker.domain.transaction.Transaction;
@@ -11,19 +12,19 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class FinancialAccount {
-    private final String userId;
+public final class FinancialAccount {
+    private final String userEmail;
     private final List<Transaction> transactions;
     private Object uncommitedEvent;
     private double previousMonthsTotalExpenses;
-    private double previousMonthsTotalIncomes;
+    private double previousMonthsTotalIncome;
     private Map<String, Double> previousMonthsExpensesByCategory;
 
-    public FinancialAccount(String userId) {
-        this.userId = userId;
+    public FinancialAccount(String userEmail) {
+        this.userEmail = userEmail;
         this.transactions = new ArrayList<>();
         this.previousMonthsTotalExpenses = 0.0;
-        this.previousMonthsTotalIncomes = 0.0;
+        this.previousMonthsTotalIncome = 0.0;
         this.previousMonthsExpensesByCategory = new HashMap<>();
     }
 
@@ -31,7 +32,7 @@ public class FinancialAccount {
         UUID transactionId = UUID.randomUUID();
         uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
-                userId,
+                userEmail,
                 "EXPENSE",
                 category,
                 description,
@@ -40,7 +41,7 @@ public class FinancialAccount {
         );
     }
 
-    public void addExpenseFromEvent(UUID id,String category, String description, double price, LocalDate date) {
+    public void addExpenseFromEvent(UUID id, String category, String description, double price, LocalDate date) {
         Transaction expense = new Expense(id, category, description, price, date);
         transactions.add(expense);
     }
@@ -49,7 +50,7 @@ public class FinancialAccount {
         UUID transactionId = UUID.randomUUID();
         uncommitedEvent = new TransactionAddedEvent(
                 transactionId,
-                userId,
+                userEmail,
                 "INCOME",
                 null,
                 description,
@@ -69,16 +70,16 @@ public class FinancialAccount {
         if(transactionExists) {
             uncommitedEvent = new TransactionRemovedEvent(
                     transactionId,
-                    userId,
+                    userEmail,
                     LocalDate.now()
             );
             transactions.removeIf(transaction -> transaction.getId().equals(transactionId));
         }
     }
 
-    public void loadFromSnapshot(double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
+    public void loadFromSnapshot(double totalExpenses, double totalIncome, Map<String, Double> expensesByCategory) {
         this.previousMonthsTotalExpenses = totalExpenses;
-        this.previousMonthsTotalIncomes = totalIncomes;
+        this.previousMonthsTotalIncome = totalIncome;
         this.previousMonthsExpensesByCategory = new HashMap<>(expensesByCategory);
     }
 
@@ -89,7 +90,7 @@ public class FinancialAccount {
                 .sum();
     }
 
-    public double getCurrentMonthIncomes() {
+    public double getCurrentMonthIncome() {
         return transactions.stream()
                 .filter(transaction -> transaction instanceof Income)
                 .mapToDouble(Transaction::getPrice)
@@ -110,11 +111,11 @@ public class FinancialAccount {
         return getCurrentMonthExpenses() + previousMonthsTotalExpenses;
     }
 
-    public double getTotalIncomes() {
-        return getCurrentMonthIncomes() + previousMonthsTotalIncomes;
+    public double getTotalIncome() {
+        return getCurrentMonthIncome() + previousMonthsTotalIncome;
     }
 
-    public Map<String, Double> getTotalExpensesByCategory() {
+    public ImmutableMap<String, Double> getTotalExpensesByCategory() {
         Map<String, Double> currentMonthCategories = getCurrentMonthExpensesByCategory();
         Map<String, Double> totalCategories = new HashMap<>(previousMonthsExpensesByCategory);
 
@@ -122,15 +123,15 @@ public class FinancialAccount {
                 totalCategories.merge(category, amount, Double::sum)
         );
 
-        return totalCategories;
+        return ImmutableMap.copyOf(totalCategories);
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public ImmutableList<Transaction> getTransactions() {
+        return ImmutableList.copyOf(transactions);
     }
 
     public Object getUncommitedEvent() {

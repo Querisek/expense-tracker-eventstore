@@ -1,13 +1,12 @@
 package com.querisek.expensetracker.domain.common;
 
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 
 public final class Category {
     private final String value;
-    private static final Set<String> VALID_CATEGORIES = Set.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
+    private static final ImmutableSet<String> VALID_CATEGORIES = ImmutableSet.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
 
     public Category(String value) {
-        validate(value);
         this.value = value;
     }
 

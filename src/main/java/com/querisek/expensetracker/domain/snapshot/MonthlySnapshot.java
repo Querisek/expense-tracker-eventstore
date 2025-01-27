@@ -1,54 +1,55 @@
 package com.querisek.expensetracker.domain.snapshot;
 
+import com.google.common.collect.ImmutableMap;
 import com.querisek.expensetracker.domain.FinancialAccount;
 
 import java.time.YearMonth;
 import java.util.Map;
 
 public class MonthlySnapshot {
-    private String userId;
-    private YearMonth month;
+    private String userEmail;
+    private YearMonth yearMonth;
     private double totalExpenses;
-    private double totalIncomes;
+    private double totalIncome;
     private Map<String, Double> expensesByCategory;
 
     public MonthlySnapshot() {}
 
-    public MonthlySnapshot(String userId, YearMonth month, double totalExpenses, double totalIncomes, Map<String, Double> expensesByCategory) {
-        this.userId = userId;
-        this.month = month;
+    public MonthlySnapshot(String userEmail, YearMonth yearMonth, double totalExpenses, double totalIncome, Map<String, Double> expensesByCategory) {
+        this.userEmail = userEmail;
+        this.yearMonth = yearMonth;
         this.totalExpenses = totalExpenses;
-        this.totalIncomes = totalIncomes;
+        this.totalIncome = totalIncome;
         this.expensesByCategory = expensesByCategory;
     }
 
-    public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth month) {
+    public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth yearMonth) {
         return new MonthlySnapshot(
-                account.getUserId(),
-                month,
+                account.getUserEmail(),
+                yearMonth,
                 account.getTotalExpenses(),
-                account.getTotalIncomes(),
+                account.getTotalIncome(),
                 account.getTotalExpensesByCategory()
         );
     }
 
-    public String getUserId() {
-        return userId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public YearMonth getMonth() {
-        return month;
+    public YearMonth getYearMonth() {
+        return yearMonth;
     }
 
     public double getTotalExpenses() {
         return totalExpenses;
     }
 
-    public double getTotalIncomes() {
-        return totalIncomes;
+    public double getTotalIncome() {
+        return totalIncome;
     }
 
     public Map<String, Double> getExpensesByCategory() {
-        return expensesByCategory;
+        return ImmutableMap.copyOf(expensesByCategory);
     }
 }

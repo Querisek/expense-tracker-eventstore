@@ -1,24 +1,17 @@
 package com.querisek.expensetracker.infrastructure.persistence;
 
 import com.eventstore.dbclient.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querisek.expensetracker.domain.*;
-import com.querisek.expensetracker.domain.expense.Expense;
-import com.querisek.expensetracker.domain.income.Income;
+import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
-import com.querisek.expensetracker.domain.transaction.Transaction;
 import com.querisek.expensetracker.domain.transaction.TransactionAddedEvent;
 import com.querisek.expensetracker.domain.transaction.TransactionRemovedEvent;
 import org.springframework.stereotype.Repository;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 @Repository
 public class FinancialAccountRepository {
@@ -32,33 +25,24 @@ public class FinancialAccountRepository {
 
     public void save(FinancialAccount financialAccount, YearMonth currentMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), currentMonth);
+            String streamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserEmail(), currentMonth);
             Object event = financialAccount.getUncommitedEvent();
             if(event != null) {
-                if(isFirstEventInMonth(streamName)) {
-                    YearMonth previousMonth = currentMonth.minusMonths(1);
-                    String previousStreamName = String.format("FinancialAccount-%s-%s", financialAccount.getUserId(), previousMonth);
-                    FinancialAccount accountFromPreviousMonth = buildFinancialAccount(financialAccount.getUserId(), previousMonth);
-                    MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(accountFromPreviousMonth, previousMonth);
-                    EventData snapshotEvent = EventData.builderAsJson("PreviousMonthSummaryEvent", objectMapper.writeValueAsBytes(snapshot)).build();
-                    EventData monthClosedEvent = EventData.builderAsJson("MonthClosedEvent", objectMapper.writeValueAsBytes(snapshot)).build();
-                    eventStoreDBClient.appendToStream(streamName, snapshotEvent).get();
-                    eventStoreDBClient.appendToStream(previousStreamName, monthClosedEvent).get();
-                }
+                tryToSnapshot(financialAccount.getUserEmail(), currentMonth);
                 String eventType = event.getClass().getSimpleName();
                 byte[] data = objectMapper.writeValueAsBytes(event);
                 EventData eventData = EventData.builderAsJson(eventType, data).build();
                 eventStoreDBClient.appendToStream(streamName, eventData).get();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Nie udalo sie dodac transakcji.", e);
+            throw new RuntimeException("Wystapil problem przy dodawaniu transakcji.", e);
         }
     }
 
-    public FinancialAccount buildFinancialAccount(String userId, YearMonth yearMonth) {
+    public FinancialAccount buildFinancialAccount(String userEmail, YearMonth yearMonth) {
         try {
-            String streamName = String.format("FinancialAccount-%s-%s", userId, yearMonth);
-            FinancialAccount financialAccount = new FinancialAccount(userId);
+            String streamName = String.format("FinancialAccount-%s-%s", userEmail, yearMonth);
+            FinancialAccount financialAccount = new FinancialAccount(userEmail);
             ReadStreamOptions options = ReadStreamOptions.get()
                     .forwards()
                     .fromStart()
@@ -71,7 +55,7 @@ public class FinancialAccountRepository {
                         MonthlySnapshot snapshot = objectMapper.readValue(firstEvent.getEvent().getEventData(), MonthlySnapshot.class);
                         financialAccount.loadFromSnapshot(
                                 snapshot.getTotalExpenses(),
-                                snapshot.getTotalIncomes(),
+                                snapshot.getTotalIncome(),
                                 snapshot.getExpensesByCategory()
                         );
                     }
@@ -112,14 +96,13 @@ public class FinancialAccountRepository {
                     }
                 }
             } catch(ExecutionException e) {
-                if (!(e.getCause() instanceof StreamNotFoundException)) {
-                    // CHANGE THIS ASAP
-                    throw e;
+                if(!(e.getCause() instanceof StreamNotFoundException)) {
+                    throw new RuntimeException("Wystapil problem podczas odczytywania historii transakcji konta.", e);
                 }
             }
             return financialAccount;
         } catch(Exception e) {
-            throw new RuntimeException("Nie udalo sie wczytac historii transakcji konta.", e);
+            throw new RuntimeException("Wystapil problem podczas odczytywania historii transakcji konta.", e);
         }
     }
 
@@ -130,11 +113,30 @@ public class FinancialAccountRepository {
                     .fromStart();
             ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
             return result.getEvents().isEmpty();
-        } catch (Exception e) {
-            if (e.getCause() instanceof StreamNotFoundException) {
+        } catch(Exception e) {
+            if(e.getCause() instanceof StreamNotFoundException) {
                 return true;
             }
-            throw new RuntimeException("Nie udalo sie sprawdzic strumienia.", e);
+            throw new RuntimeException("Wystapil problem podczas sprawdzania strumienia.", e);
+        }
+    }
+
+    public void tryToSnapshot(String userEmail, YearMonth yearMonth) {
+        try {
+            String streamName = String.format("FinancialAccount-%s-%s", userEmail, yearMonth);
+            if(isFirstEventInMonth(streamName)) {
+                YearMonth previousMonth = yearMonth.minusMonths(1);
+                String previousStreamName = String.format("FinancialAccount-%s-%s", userEmail, previousMonth);
+                FinancialAccount accountFromPreviousMonth = buildFinancialAccount(userEmail, previousMonth);
+                MonthlySnapshot snapshot = MonthlySnapshot.createFromAccount(accountFromPreviousMonth, previousMonth);
+                EventData snapshotEvent = EventData.builderAsJson("PreviousMonthSummaryEvent", objectMapper.writeValueAsBytes(snapshot)).build();
+                EventData monthClosedEvent = EventData.builderAsJson("MonthClosedEvent", objectMapper.writeValueAsBytes(snapshot)).build();
+                eventStoreDBClient.appendToStream(streamName, snapshotEvent).get();
+                eventStoreDBClient.appendToStream(previousStreamName, monthClosedEvent).get();
+            }
+        }
+        catch(Exception e) {
+            throw new RuntimeException("Wystapil problem podczas sprawdzania strumienia.", e);
         }
     }
 }
