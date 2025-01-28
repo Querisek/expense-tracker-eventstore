@@ -1,7 +1,6 @@
 package com.querisek.expensetracker.infrastructure.persistence;
 
 import com.eventstore.dbclient.*;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querisek.expensetracker.domain.FinancialAccount;
 import com.querisek.expensetracker.domain.snapshot.MonthlySnapshot;
@@ -34,7 +33,7 @@ public class FinancialAccountRepository {
                 EventData eventData = EventData.builderAsJson(eventType, data).build();
                 eventStoreDBClient.appendToStream(streamName, eventData).get();
             }
-        } catch (Exception e) {
+        } catch(Exception e) {
             throw new RuntimeException("Wystapil problem przy dodawaniu transakcji.", e);
         }
     }
@@ -65,13 +64,13 @@ public class FinancialAccountRepository {
                         .fromStart();
                 result = eventStoreDBClient.readStream(streamName, options).get();
                 for(ResolvedEvent resolvedEvent : result.getEvents()) {
-                    if (!resolvedEvent.getEvent().getEventType().equals("PreviousMonthSummaryEvent")) {
+                    if(!resolvedEvent.getEvent().getEventType().equals("PreviousMonthSummaryEvent")) {
                         String eventBody = new String(resolvedEvent.getEvent().getEventData(), StandardCharsets.UTF_8);
                         String eventType = resolvedEvent.getEvent().getEventType();
-                        switch (eventType) {
+                        switch(eventType) {
                             case "TransactionAddedEvent" -> {
                                 TransactionAddedEvent event = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
-                                if (event.getType().equals("EXPENSE")) {
+                                if(event.getType().equals("EXPENSE")) {
                                     financialAccount.addExpenseFromEvent(
                                             event.getTransactionId(),
                                             event.getCategory(),
@@ -109,8 +108,9 @@ public class FinancialAccountRepository {
     private boolean isFirstEventInMonth(String streamName) {
         try {
             ReadStreamOptions options = ReadStreamOptions.get()
-                    .maxCount(1)
-                    .fromStart();
+                    .forwards()
+                    .fromStart()
+                    .maxCount(1);
             ReadResult result = eventStoreDBClient.readStream(streamName, options).get();
             return result.getEvents().isEmpty();
         } catch(Exception e) {
