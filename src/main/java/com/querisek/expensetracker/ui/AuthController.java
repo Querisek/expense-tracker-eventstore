@@ -49,8 +49,7 @@ public class AuthController {
     public String changeUsersPassword(@RequestParam String currentPassword,
                                       @RequestParam String newPassword,
                                       @RequestParam String confirmNewPassword,
-                                      @AuthenticationPrincipal UserDetails userDetails,
-                                      Model model) {
+                                      @AuthenticationPrincipal UserDetails userDetails) {
         if(!newPassword.equals(confirmNewPassword)) {
             return "redirect:/?passwordDoesNotMatch";
         }
