@@ -13,8 +13,11 @@
       <div class="card shadow-sm">
         <div class="card-body p-4">
           <h2 class="text-center mb-4">Rejestracja</h2>
-          <div th:if="${param.success}" class="alert alert-success">
+          <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
             Konto zostało utworzone.
+            <form th:action="@{/register}" method="GET">
+              <button type="submit" class="btn-close" aria-label="Close"></button>
+            </form>
           </div>
           <form autocomplete="off" th:action="@{/register}" method="POST" th:object="${user}">
             <div class="mb-3">
