@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 public class EventStoreDBConfig {
     @Bean
     public EventStoreDBClient EventStoreDBClient(@Value("${esdb.connectionstring}") String connectionString) {
-        return EventStoreDBClient.create(
-                EventStoreDBConnectionString.parseOrThrow(connectionString));
+        return EventStoreDBClient.create(EventStoreDBConnectionString.parseOrThrow(connectionString));
     }
 }
