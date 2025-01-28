@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
                     user.getPassword(),
                     Collections.emptyList());
         } else {
-            throw new UsernameNotFoundException("Bledny adres email lub haslo.");
+            throw new UsernameNotFoundException("Taki uzytkownik nie istnieje.");
         }
     }
 }
