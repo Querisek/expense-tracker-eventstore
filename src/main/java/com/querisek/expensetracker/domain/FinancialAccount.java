@@ -77,7 +77,7 @@ public final class FinancialAccount {
         }
     }
 
-    public void loadFromSnapshot(double totalExpenses, double totalIncome, Map<String, Double> expensesByCategory) {
+    public void loadFromSnapshot(double totalExpenses, double totalIncome, ImmutableMap<String, Double> expensesByCategory) {
         this.previousMonthsTotalExpenses = totalExpenses;
         this.previousMonthsTotalIncome = totalIncome;
         this.previousMonthsExpensesByCategory = new HashMap<>(expensesByCategory);
