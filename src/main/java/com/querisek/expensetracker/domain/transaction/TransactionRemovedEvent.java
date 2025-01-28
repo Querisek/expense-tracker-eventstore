@@ -5,7 +5,7 @@ import com.querisek.expensetracker.domain.common.Date;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class TransactionRemovedEvent {
+public final class TransactionRemovedEvent {
     private UUID transactionId;
     private String userEmail;
     private Date removedAt;
@@ -35,7 +35,7 @@ public class TransactionRemovedEvent {
     }
 
     public LocalDate getRemovedAt() {
-        return removedAt.getValue();
+        return removedAt.getDate();
     }
 
     public void setRemovedAt(LocalDate removedAt) {

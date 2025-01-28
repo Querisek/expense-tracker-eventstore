@@ -30,10 +30,10 @@ public class FinancialController {
                              @AuthenticationPrincipal UserDetails userDetails,
                              HttpServletRequest httpRequest,
                              RedirectAttributes redirectAttributes) {
-        Validation categoryValidation = Category.validate(request.getExpenseCategory());
-        Validation descriptionValidation = Description.validate(request.getExpenseDescription());
+        Validation categoryValidation = Category.validate(request.getCategory());
+        Validation descriptionValidation = Description.validate(request.getDescription());
         Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
-        Validation dateValidation = Date.validate(request.getExpenseCreatedAt());
+        Validation dateValidation = Date.validate(request.getCreatedAt());
         if(!categoryValidation.isValid()) {
             redirectAttributes.addAttribute("categoryInvalid", categoryValidation.getMessage());
             return "redirect:" + httpRequest.getHeader("Referer");
@@ -51,14 +51,14 @@ public class FinancialController {
             return "redirect:" + httpRequest.getHeader("Referer");
         }
 
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getExpenseCreatedAt()));
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getCreatedAt()));
         financialAccount.addExpense(
-                request.getExpenseCategory(),
-                request.getExpenseDescription(),
+                request.getCategory(),
+                request.getDescription(),
                 request.getPrice(),
-                request.getExpenseCreatedAt()
+                request.getCreatedAt()
         );
-        financialAccountRepository.save(financialAccount, YearMonth.from(request.getExpenseCreatedAt()));
+        financialAccountRepository.save(financialAccount, YearMonth.from(request.getCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {
@@ -71,9 +71,9 @@ public class FinancialController {
                             @AuthenticationPrincipal UserDetails userDetails,
                             HttpServletRequest httpRequest,
                             RedirectAttributes redirectAttributes) {
-        Validation descriptionValidation = Description.validate(request.getIncomeDescription());
+        Validation descriptionValidation = Description.validate(request.getDescription());
         Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
-        Validation dateValidation = Date.validate(request.getIncomeCreatedAt());
+        Validation dateValidation = Date.validate(request.getCreatedAt());
         if(!descriptionValidation.isValid()) {
             redirectAttributes.addAttribute("descriptionInvalid", descriptionValidation.getMessage());
             return "redirect:" + httpRequest.getHeader("Referer");
@@ -86,13 +86,13 @@ public class FinancialController {
             redirectAttributes.addAttribute("dateInvalid", dateValidation.getMessage());
             return "redirect:" + httpRequest.getHeader("Referer");
         }
-        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getIncomeCreatedAt()));
+        FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getCreatedAt()));
         financialAccount.addIncome(
-                request.getIncomeDescription(),
+                request.getDescription(),
                 request.getPrice(),
-                request.getIncomeCreatedAt()
+                request.getCreatedAt()
         );
-        financialAccountRepository.save(financialAccount, YearMonth.from(request.getIncomeCreatedAt()));
+        financialAccountRepository.save(financialAccount, YearMonth.from(request.getCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
         } else {

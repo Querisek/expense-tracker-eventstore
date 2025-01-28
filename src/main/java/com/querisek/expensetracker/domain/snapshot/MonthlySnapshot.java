@@ -6,7 +6,7 @@ import com.querisek.expensetracker.domain.FinancialAccount;
 import java.time.YearMonth;
 import java.util.Map;
 
-public class MonthlySnapshot {
+public final class MonthlySnapshot {
     private String userEmail;
     private YearMonth yearMonth;
     private double totalExpenses;

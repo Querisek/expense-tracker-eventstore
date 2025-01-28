@@ -7,49 +7,49 @@ import com.querisek.expensetracker.domain.common.Money;
 
 import java.time.LocalDate;
 
-public class AddExpenseRequest {
-    private Category expenseCategory;
-    private Description expenseDescription;
+public final class AddExpenseRequest {
+    private Category category;
+    private Description description;
     private Money price;
-    private Date expenseCreatedAt;
+    private Date createdAt;
 
     public AddExpenseRequest() {}
 
-    public AddExpenseRequest(String expenseCategory, String expenseDescription, double price) {
-        this.expenseCategory = new Category(expenseCategory);
-        this.expenseDescription = new Description(expenseDescription);
+    public AddExpenseRequest(String category, String description, double price) {
+        this.category = new Category(category);
+        this.description = new Description(description);
         this.price = new Money(price);
     }
 
-    public String getExpenseCategory() {
-        return expenseCategory.getValue();
+    public String getCategory() {
+        return category.getName();
     }
 
-    public void setExpenseCategory(String expenseCategory) {
-        this.expenseCategory = new Category(expenseCategory);
+    public void setCategory(String category) {
+        this.category = new Category(category);
     }
 
-    public String getExpenseDescription() {
-        return expenseDescription.getValue();
+    public String getDescription() {
+        return description.getDescription();
     }
 
-    public void setExpenseDescription(String expenseDescription) {
-        this.expenseDescription = new Description(expenseDescription);
+    public void setDescription(String description) {
+        this.description = new Description(description);
     }
 
     public double getPrice() {
-        return price.getValue();
+        return price.getAmount();
     }
 
     public void setPrice(double price) {
         this.price = new Money(price);
     }
 
-    public LocalDate getExpenseCreatedAt() {
-        return expenseCreatedAt.getValue();
+    public LocalDate getCreatedAt() {
+        return createdAt.getDate();
     }
 
-    public void setExpenseCreatedAt(LocalDate expenseCreatedAt) {
-        this.expenseCreatedAt = new Date(expenseCreatedAt);
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = new Date(createdAt);
     }
 }

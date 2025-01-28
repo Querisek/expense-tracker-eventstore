@@ -3,25 +3,25 @@ package com.querisek.expensetracker.domain.common;
 import com.google.common.collect.ImmutableSet;
 
 public final class Category {
-    private final String value;
-    private static final ImmutableSet<String> VALID_CATEGORIES = ImmutableSet.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
+    private final String name;
+    private static final ImmutableSet<String> CATEGORIES = ImmutableSet.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
 
-    public Category(String value) {
-        this.value = value;
+    public Category(String name) {
+        this.name = name;
     }
 
-    public static Validation validate(String value) {
-        if(value == null || value.trim().isEmpty()) {
+    public static Validation validate(String name) {
+        if(name == null || name.trim().isEmpty()) {
             return Validation.error("Kategoria nie może być pusta.");
         }
-        if(!VALID_CATEGORIES.contains(value)) {
+        if(!CATEGORIES.contains(name)) {
             return Validation.error("Niepoprawna kategoria.");
         }
         return Validation.success();
     }
 
-    public String getValue() {
-        return value;
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -29,16 +29,16 @@ public final class Category {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Category that = (Category) o;
-        return value.equals(that.value);
+        return name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return name.hashCode();
     }
 
     @Override
     public String toString() {
-        return value;
+        return name;
     }
 }

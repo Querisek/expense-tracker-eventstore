@@ -5,35 +5,34 @@ import java.math.RoundingMode;
 import java.util.Objects;
 
 public final class Money {
-    private final BigDecimal value;
-    private static final int DECIMAL_PLACES = 2;
-    private static final BigDecimal MIN_VALUE = BigDecimal.ZERO;
-    private static final BigDecimal MAX_VALUE = new BigDecimal("1000000000.00");
+    private final BigDecimal amount;
+    private static final BigDecimal MIN_AMOUNT = BigDecimal.ZERO;
+    private static final BigDecimal MAX_AMOUNT = new BigDecimal("1000000000.00");
 
-    public Money(double value) {
-        this(BigDecimal.valueOf(value));
+    public Money(double amount) {
+        this(BigDecimal.valueOf(amount));
     }
 
-    public Money(BigDecimal value) {
-        this.value = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
+    public Money(BigDecimal amount) {
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
     }
 
-    public static Validation validate(BigDecimal value) {
-        if(value == null) {
+    public static Validation validate(BigDecimal amount) {
+        if(amount == null) {
             return Validation.error("Nie podano kwoty.");
         }
-        BigDecimal roundedValue = value.setScale(DECIMAL_PLACES, RoundingMode.HALF_UP);
-        if(roundedValue.compareTo(MIN_VALUE) < 0) {
+        BigDecimal roundedAmount = amount.setScale(2, RoundingMode.HALF_UP);
+        if(roundedAmount.compareTo(MIN_AMOUNT) <= 0) {
             return Validation.error("Kwota musi być większa od zera.");
         }
-        if(roundedValue.compareTo(MAX_VALUE) > 0) {
-            return Validation.error("Kwota nie może być większa niż " + MAX_VALUE + " PLN.");
+        if(roundedAmount.compareTo(MAX_AMOUNT) > 0) {
+            return Validation.error("Kwota nie może być większa niż " + MAX_AMOUNT + " PLN.");
         }
         return Validation.success();
     }
 
-    public double getValue() {
-        return value.doubleValue();
+    public double getAmount() {
+        return amount.doubleValue();
     }
 
     @Override
@@ -41,16 +40,16 @@ public final class Money {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Money money = (Money) o;
-        return value.compareTo(money.value) == 0;
+        return amount.compareTo(money.amount) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(amount);
     }
 
     @Override
     public String toString() {
-        return value.toString() + " PLN";
+        return amount.toString() + " PLN";
     }
 }

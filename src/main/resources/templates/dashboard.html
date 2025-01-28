@@ -360,7 +360,7 @@
         <form id="expenseForm" th:action="@{/transactions/add/expense}" method="POST">
           <div class="mb-3">
             <label for="category" class="form-label">Kategoria</label>
-            <select class="form-select" id="category" name="expenseCategory" required>
+            <select class="form-select" id="category" name="category" required>
               <option value="Jedzenie">Jedzenie</option>
               <option value="Podróże">Podróże</option>
               <option value="Zdrowie">Zdrowie</option>
@@ -371,7 +371,7 @@
           </div>
           <div class="mb-3">
             <label for="expenseDescription" class="form-label">Opis</label>
-            <input type="text" class="form-control" id="expenseDescription" name="expenseDescription" required>
+            <input type="text" class="form-control" id="expenseDescription" name="description" required>
           </div>
           <div class="mb-3">
             <label for="expensePrice" class="form-label">Kwota (PLN)</label>
@@ -379,7 +379,7 @@
           </div>
           <div class="mb-3">
             <label for="expenseDate" class="form-label">Data wydatku</label>
-            <input type="date" class="form-control" id="expenseDate" name="expenseCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
+            <input type="date" class="form-control" id="expenseDate" name="createdAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
         </form>
       </div>
@@ -401,7 +401,7 @@
         <form id="incomeForm" th:action="@{/transactions/add/income}"  method="POST">
           <div class="mb-3">
             <label for="incomeDescription" class="form-label">Opis</label>
-            <input type="text" class="form-control" id="incomeDescription" name="incomeDescription" required>
+            <input type="text" class="form-control" id="incomeDescription" name="description" required>
           </div>
           <div class="mb-3">
             <label for="incomePrice" class="form-label">Kwota (PLN)</label>
@@ -409,7 +409,7 @@
           </div>
           <div class="mb-3">
             <label for="incomeDate" class="form-label">Data przychodu</label>
-            <input type="date" class="form-control" id="incomeDate" name="incomeCreatedAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
+            <input type="date" class="form-control" id="incomeDate" name="createdAt" th:min="${#temporals.format(#temporals.createNow().withDayOfMonth(1), 'yyyy-MM-dd')}" th:max="${#temporals.format(#temporals.createNow().withDayOfMonth(#temporals.createNow().toLocalDate().lengthOfMonth()), 'yyyy-MM-dd')}" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}" required>
           </div>
         </form>
       </div>
