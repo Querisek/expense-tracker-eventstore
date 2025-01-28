@@ -42,31 +42,45 @@
     <div class="col-md-4">
       <div th:if="${param.passwordChangedSuccessfully}" class="alert alert-success alert-dismissible fade show" role="alert">
         Pomyślnie zmieniono hasło.
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.passwordDoesNotMatch}" class="alert alert-warning alert-dismissible fade show" role="alert">
         Podane hasła nie są takie same.
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.wrongPassword}" class="alert alert-danger alert-dismissible fade show" role="alert">
         Podano złe hasło lub nowe hasło zawiera mniej niż 8 znaków.
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.categoryInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${param.categoryInvalid[0]}"></span>
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.descriptionInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${param.descriptionInvalid[0]}"></span>
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.priceInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${param.priceInvalid[0]}"></span>
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <div th:if="${param.dateInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
         <span th:text="${param.dateInvalid[0]}"></span>
-        <button type="button" onclick="this.parentElement.remove();" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+        <form th:action="@{/}" method="GET">
+          <button type="submit" class="btn-close" aria-label="Close"></button>
+        </form>
       </div>
       <form th:action="@{/}" method="GET">
         <div class="d-flex flex-column">
