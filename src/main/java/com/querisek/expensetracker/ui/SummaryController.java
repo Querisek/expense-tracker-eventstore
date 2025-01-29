@@ -27,17 +27,16 @@ public class SummaryController {
     }
 
     @GetMapping
-    public String showSummaryToUser(@AuthenticationPrincipal UserDetails userDetails,
-                                    @RequestParam(required = false) Integer year,
-                                    @RequestParam(required = false) Integer month,
-                                    Model model) {
+    public String showSummaryToUser(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(required = false) Integer year, @RequestParam(required = false) Integer month, Model model) {
         YearMonth yearMonth;
         if(year != null && month != null) {
             yearMonth = YearMonth.of(year, month);
         } else {
             yearMonth = YearMonth.now();
         }
-        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
+        if(yearMonth.equals(YearMonth.now())) {
+            financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
+        }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         FinancialAccount currentFinancialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.now());
 

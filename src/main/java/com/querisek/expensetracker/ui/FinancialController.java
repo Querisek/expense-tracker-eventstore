@@ -26,10 +26,7 @@ public class FinancialController {
     }
 
     @PostMapping("/transactions/add/expense")
-    public String addExpense(@ModelAttribute AddExpenseRequest request,
-                             @AuthenticationPrincipal UserDetails userDetails,
-                             HttpServletRequest httpRequest,
-                             RedirectAttributes redirectAttributes) {
+    public String addExpense(@ModelAttribute AddExpenseRequest request, @AuthenticationPrincipal UserDetails userDetails, HttpServletRequest httpRequest, RedirectAttributes redirectAttributes) {
         Validation categoryValidation = Category.validate(request.getCategory());
         Validation descriptionValidation = Description.validate(request.getDescription());
         Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
@@ -50,14 +47,8 @@ public class FinancialController {
             redirectAttributes.addAttribute("dateInvalid", dateValidation.getMessage());
             return "redirect:" + httpRequest.getHeader("Referer");
         }
-
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getCreatedAt()));
-        financialAccount.addExpense(
-                request.getCategory(),
-                request.getDescription(),
-                request.getPrice(),
-                request.getCreatedAt()
-        );
+        financialAccount.addExpense(request.getCategory(), request.getDescription(), request.getPrice(), request.getCreatedAt());
         financialAccountRepository.save(financialAccount, YearMonth.from(request.getCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
@@ -67,10 +58,7 @@ public class FinancialController {
     }
 
     @PostMapping("/transactions/add/income")
-    public String addIncome(@ModelAttribute AddIncomeRequest request,
-                            @AuthenticationPrincipal UserDetails userDetails,
-                            HttpServletRequest httpRequest,
-                            RedirectAttributes redirectAttributes) {
+    public String addIncome(@ModelAttribute AddIncomeRequest request, @AuthenticationPrincipal UserDetails userDetails, HttpServletRequest httpRequest, RedirectAttributes redirectAttributes) {
         Validation descriptionValidation = Description.validate(request.getDescription());
         Validation moneyValidation = Money.validate(BigDecimal.valueOf(request.getPrice()));
         Validation dateValidation = Date.validate(request.getCreatedAt());
@@ -87,11 +75,7 @@ public class FinancialController {
             return "redirect:" + httpRequest.getHeader("Referer");
         }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(request.getCreatedAt()));
-        financialAccount.addIncome(
-                request.getDescription(),
-                request.getPrice(),
-                request.getCreatedAt()
-        );
+        financialAccount.addIncome(request.getDescription(), request.getPrice(), request.getCreatedAt());
         financialAccountRepository.save(financialAccount, YearMonth.from(request.getCreatedAt()));
         if(httpRequest.getHeader("Referer") != null) {
             return "redirect:" + httpRequest.getHeader("Referer");
@@ -101,10 +85,7 @@ public class FinancialController {
     }
 
     @GetMapping("/transactions/delete/{id}")
-    public String deleteTransaction(@PathVariable UUID id,
-                                    @AuthenticationPrincipal UserDetails userDetails,
-                                    @RequestParam LocalDate transactionDate,
-                                    HttpServletRequest httpRequest) {
+    public String deleteTransaction(@PathVariable UUID id, @AuthenticationPrincipal UserDetails userDetails, @RequestParam LocalDate transactionDate, HttpServletRequest httpRequest) {
         if(YearMonth.from(transactionDate).equals(YearMonth.now())) {
             FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), YearMonth.from(transactionDate));
             financialAccount.removeTransaction(id);

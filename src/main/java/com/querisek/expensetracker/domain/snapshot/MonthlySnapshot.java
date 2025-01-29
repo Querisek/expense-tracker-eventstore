@@ -24,13 +24,7 @@ public final class MonthlySnapshot {
     }
 
     public static MonthlySnapshot createFromAccount(FinancialAccount account, YearMonth yearMonth) {
-        return new MonthlySnapshot(
-                account.getUserEmail(),
-                yearMonth,
-                account.getTotalExpenses(),
-                account.getTotalIncome(),
-                account.getTotalExpensesByCategory()
-        );
+        return new MonthlySnapshot(account.getUserEmail(), yearMonth, account.getTotalExpenses(), account.getTotalIncome(), account.getTotalExpensesByCategory());
     }
 
     public String getUserEmail() {

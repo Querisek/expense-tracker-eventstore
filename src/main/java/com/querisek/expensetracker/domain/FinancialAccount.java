@@ -30,15 +30,7 @@ public final class FinancialAccount {
 
     public void addExpense(String category, String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        uncommitedEvent = new TransactionAddedEvent(
-                transactionId,
-                userEmail,
-                "EXPENSE",
-                category,
-                description,
-                price,
-                date
-        );
+        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "EXPENSE", category, description, price, date);
     }
 
     public void addExpenseFromEvent(UUID id, String category, String description, double price, LocalDate date) {
@@ -48,15 +40,7 @@ public final class FinancialAccount {
 
     public void addIncome(String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        uncommitedEvent = new TransactionAddedEvent(
-                transactionId,
-                userEmail,
-                "INCOME",
-                null,
-                description,
-                price,
-                date
-        );
+        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "INCOME", null, description, price, date);
     }
 
     public void addIncomeFromEvent(UUID id, String description, double price, LocalDate date) {
@@ -68,11 +52,7 @@ public final class FinancialAccount {
         boolean transactionExists = transactions.stream()
                 .anyMatch(transaction -> transaction.getId().equals(transactionId));
         if(transactionExists) {
-            uncommitedEvent = new TransactionRemovedEvent(
-                    transactionId,
-                    userEmail,
-                    LocalDate.now()
-            );
+            uncommitedEvent = new TransactionRemovedEvent(transactionId, userEmail, LocalDate.now());
             transactions.removeIf(transaction -> transaction.getId().equals(transactionId));
         }
     }
@@ -101,10 +81,7 @@ public final class FinancialAccount {
         return transactions.stream()
                 .filter(transaction -> transaction instanceof Expense)
                 .map(transaction -> (Expense) transaction)
-                .collect(Collectors.groupingBy(
-                        Expense::getCategory,
-                        Collectors.summingDouble(Transaction::getPrice)
-                ));
+                .collect(Collectors.groupingBy(Expense::getCategory, Collectors.summingDouble(Transaction::getPrice)));
     }
 
     public double getTotalExpenses() {
@@ -118,10 +95,7 @@ public final class FinancialAccount {
     public ImmutableMap<String, Double> getTotalExpensesByCategory() {
         Map<String, Double> currentMonthCategories = getCurrentMonthExpensesByCategory();
         Map<String, Double> totalCategories = new HashMap<>(previousMonthsExpensesByCategory);
-
-        currentMonthCategories.forEach((category, amount) ->
-                totalCategories.merge(category, amount, Double::sum)
-        );
+        currentMonthCategories.forEach((category, amount) -> totalCategories.merge(category, amount, Double::sum));
 
         return ImmutableMap.copyOf(totalCategories);
     }

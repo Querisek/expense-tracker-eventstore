@@ -14,7 +14,7 @@ public final class Date {
             return Validation.error("Brak daty.");
         }
         if(date.isAfter(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()))) {
-            return Validation.error("Nie można wybrać daty, która jeszcze się nie wydarzyła.");
+            return Validation.error("Wybór daty jest dostępny tylko w zakresie aktualnego miesiąca.");
         }
         return Validation.success();
     }
