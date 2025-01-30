@@ -13,7 +13,7 @@ public final class Date {
         if(date == null) {
             return Validation.error("Brak daty.");
         }
-        if(date.isAfter(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()))) {
+        if(date.isAfter(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())) || date.isBefore(LocalDate.now().withDayOfMonth(1))) {
             return Validation.error("Wybór daty jest dostępny tylko w zakresie aktualnego miesiąca.");
         }
         return Validation.success();
