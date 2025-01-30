@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableSet;
 
 public final class Category {
     private final String name;
-    private static final ImmutableSet<String> CATEGORIES = ImmutableSet.of("Jedzenie", "Podróże", "Zdrowie", "Rozrywka", "Dom", "Inne");
+    private static final ImmutableSet<String> CATEGORIES = ImmutableSet.of("food", "travel", "health", "entertainment", "home", "other");
 
     public Category(String name) {
         this.name = name;
