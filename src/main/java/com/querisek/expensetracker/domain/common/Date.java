@@ -3,24 +3,24 @@ package com.querisek.expensetracker.domain.common;
 import java.time.LocalDate;
 
 public final class Date {
-    private final LocalDate value;
+    private final LocalDate date;
 
-    public Date(LocalDate value) {
-        this.value = value;
+    public Date(LocalDate date) {
+        this.date = date;
     }
 
-    public static Validation validate(LocalDate value) {
-        if(value == null) {
+    public static Validation validate(LocalDate date) {
+        if(date == null) {
             return Validation.error("Brak daty.");
         }
-        if(value.isAfter(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()))) {
-            return Validation.error("Nie można wybrać daty, która jeszcze się nie wydarzyła.");
+        if(date.isAfter(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth()))) {
+            return Validation.error("Wybór daty jest dostępny tylko w zakresie aktualnego miesiąca.");
         }
         return Validation.success();
     }
 
-    public LocalDate getValue() {
-        return value;
+    public LocalDate getDate() {
+        return date;
     }
 
     @Override
@@ -28,16 +28,16 @@ public final class Date {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Date that = (Date) o;
-        return value.equals(that.value);
+        return date.equals(that.date);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return date.hashCode();
     }
 
     @Override
     public String toString() {
-        return value.toString();
+        return date.toString();
     }
 }

@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
     public boolean changeUsersPassword(String email, String currentPassword, String newPassword) {
         User user = userRepository.findByEmail(email);
         if(user != null && passwordEncoder.matches(currentPassword, user.getPassword())) {
-            if(newPassword.length() >= 8) {
+            if(newPassword.length() >= 8 && newPassword.length() <= 60) {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
                 return true;
@@ -46,11 +46,9 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
         if(user != null) {
-            return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                    user.getPassword(),
-                    Collections.emptyList());
+            return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), Collections.emptyList());
         } else {
-            throw new UsernameNotFoundException("Bledny adres email lub haslo.");
+            throw new UsernameNotFoundException("Taki użytkownik nie istnieje.");
         }
     }
 }

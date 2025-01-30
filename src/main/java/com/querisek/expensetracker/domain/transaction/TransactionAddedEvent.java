@@ -8,7 +8,7 @@ import com.querisek.expensetracker.domain.common.Money;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class TransactionAddedEvent {
+public final class TransactionAddedEvent {
     private UUID transactionId;
     private String userEmail;
     private String type;
@@ -54,7 +54,7 @@ public class TransactionAddedEvent {
     }
 
     public String getCategory() {
-        return category.getValue();
+        return category.getName();
     }
 
     public void setCategory(String category) {
@@ -62,7 +62,7 @@ public class TransactionAddedEvent {
     }
 
     public String getDescription() {
-        return description.getValue();
+        return description.getDescription();
     }
 
     public void setDescription(String description) {
@@ -70,7 +70,7 @@ public class TransactionAddedEvent {
     }
 
     public double getPrice() {
-        return price.getValue();
+        return price.getAmount();
     }
 
     public void setPrice(double price) {
@@ -78,7 +78,7 @@ public class TransactionAddedEvent {
     }
 
     public LocalDate getCreatedAt() {
-        return createdAt.getValue();
+        return createdAt.getDate();
     }
 
     public void setCreatedAt(LocalDate createdAt) {

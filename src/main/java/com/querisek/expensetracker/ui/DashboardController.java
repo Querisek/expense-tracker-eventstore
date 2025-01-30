@@ -30,16 +30,16 @@ public class DashboardController {
     }
 
     @GetMapping("/")
-    public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                @AuthenticationPrincipal UserDetails userDetails,
-                                Model model) {
+    public String showDashboard(@RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date, @AuthenticationPrincipal UserDetails userDetails, Model model) {
         YearMonth yearMonth;
         if(date != null) {
             yearMonth = YearMonth.from(date);
         } else {
             yearMonth = YearMonth.now();
         }
-        financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
+        if(yearMonth.equals(YearMonth.now())) {
+            financialAccountRepository.tryToSnapshot(userDetails.getUsername(), yearMonth);
+        }
         FinancialAccount financialAccount = financialAccountRepository.buildFinancialAccount(userDetails.getUsername(), yearMonth);
         LocalDate selectedDate = Objects.requireNonNullElseGet(date, LocalDate::now);
         ImmutableList<Transaction> allTransactionsFilteredByDay = financialAccount.getTransactions().stream()

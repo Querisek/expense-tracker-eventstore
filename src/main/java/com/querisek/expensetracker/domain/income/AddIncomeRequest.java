@@ -6,39 +6,39 @@ import com.querisek.expensetracker.domain.common.Money;
 
 import java.time.LocalDate;
 
-public class AddIncomeRequest {
-    private Description incomeDescription;
+public final class AddIncomeRequest {
+    private Description description;
     private Money price;
-    private Date incomeCreatedAt;
+    private Date createdAt;
 
     public AddIncomeRequest() {}
 
-    public AddIncomeRequest(String incomeDescription, double price) {
-        this.incomeDescription = new Description(incomeDescription);
+    public AddIncomeRequest(String description, double price) {
+        this.description = new Description(description);
         this.price = new Money(price);
     }
 
-    public String getIncomeDescription() {
-        return incomeDescription.getValue();
+    public String getDescription() {
+        return description.getDescription();
     }
 
-    public void setIncomeDescription(String incomeDescription) {
-        this.incomeDescription = new Description(incomeDescription);
+    public void setDescription(String description) {
+        this.description = new Description(description);
     }
 
     public double getPrice() {
-        return price.getValue();
+        return price.getAmount();
     }
 
     public void setPrice(double price) {
         this.price = new Money(price);
     }
 
-    public LocalDate getIncomeCreatedAt() {
-        return incomeCreatedAt.getValue();
+    public LocalDate getCreatedAt() {
+        return createdAt.getDate();
     }
 
-    public void setIncomeCreatedAt(LocalDate incomeCreatedAt) {
-        this.incomeCreatedAt = new Date(incomeCreatedAt);
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = new Date(createdAt);
     }
 }

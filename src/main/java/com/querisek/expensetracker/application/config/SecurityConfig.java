@@ -22,9 +22,9 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/authenticateTheUser")
                         .defaultSuccessUrl("/", true)
-                        .permitAll()
-                )
+                        .permitAll())
                 .logout(LogoutConfigurer::permitAll);
+
         return http.build();
     }
 

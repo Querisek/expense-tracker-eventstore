@@ -25,14 +25,14 @@ public abstract class Transaction {
     }
 
     public String getDescription() {
-        return description.getValue();
+        return description.getDescription();
     }
 
     public double getPrice() {
-        return price.getValue();
+        return price.getAmount();
     }
 
     public LocalDate getCreatedAt() {
-        return createdAt.getValue();
+        return createdAt.getDate();
     }
 }

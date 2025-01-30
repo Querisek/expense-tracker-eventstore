@@ -46,11 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/passwordChange")
-    public String changeUsersPassword(@RequestParam String currentPassword,
-                                      @RequestParam String newPassword,
-                                      @RequestParam String confirmNewPassword,
-                                      @AuthenticationPrincipal UserDetails userDetails,
-                                      Model model) {
+    public String changeUsersPassword(@RequestParam String currentPassword, @RequestParam String newPassword, @RequestParam String confirmNewPassword, @AuthenticationPrincipal UserDetails userDetails) {
         if(!newPassword.equals(confirmNewPassword)) {
             return "redirect:/?passwordDoesNotMatch";
         }

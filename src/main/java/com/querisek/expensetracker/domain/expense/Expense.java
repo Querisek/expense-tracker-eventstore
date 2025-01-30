@@ -6,7 +6,7 @@ import com.querisek.expensetracker.domain.transaction.Transaction;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Expense extends Transaction {
+public final class Expense extends Transaction {
     private final Category category;
 
     public Expense(UUID id, String category, String description, double price, LocalDate createdAt) {
@@ -15,6 +15,6 @@ public class Expense extends Transaction {
     }
 
     public String getCategory() {
-        return category.getValue();
+        return category.getName();
     }
 }
