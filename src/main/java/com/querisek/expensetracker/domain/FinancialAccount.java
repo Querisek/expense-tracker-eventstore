@@ -30,7 +30,7 @@ public final class FinancialAccount {
 
     public void addExpense(String category, String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "EXPENSE", category, description, price, date);
+        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "expense", category, description, price, date);
     }
 
     public void addExpenseFromEvent(UUID id, String category, String description, double price, LocalDate date) {
@@ -40,7 +40,7 @@ public final class FinancialAccount {
 
     public void addIncome(String description, double price, LocalDate date) {
         UUID transactionId = UUID.randomUUID();
-        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "INCOME", null, description, price, date);
+        uncommitedEvent = new TransactionAddedEvent(transactionId, userEmail, "income", null, description, price, date);
     }
 
     public void addIncomeFromEvent(UUID id, String description, double price, LocalDate date) {

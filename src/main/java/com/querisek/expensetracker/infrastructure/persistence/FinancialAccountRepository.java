@@ -58,7 +58,7 @@ public class FinancialAccountRepository {
                         switch(eventType) {
                             case "TransactionAddedEvent" -> {
                                 TransactionAddedEvent event = objectMapper.readValue(eventBody, TransactionAddedEvent.class);
-                                if(event.getType().equals("EXPENSE")) {
+                                if(event.getType().equals("expense")) {
                                     financialAccount.addExpenseFromEvent(event.getTransactionId(), event.getCategory(), event.getDescription(), event.getPrice(), event.getCreatedAt());
                                 } else {
                                     financialAccount.addIncomeFromEvent(event.getTransactionId(), event.getDescription(), event.getPrice(), event.getCreatedAt());
