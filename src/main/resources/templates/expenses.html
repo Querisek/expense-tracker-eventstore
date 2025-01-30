@@ -17,13 +17,22 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/transactions/summary}"><i class="bi bi-house-fill"></i> Podsumowanie finansów</a>
+          <a class="nav-link" th:href="@{/transactions/summary}">
+            <i class="bi bi-house-fill"></i>
+            Podsumowanie finansów
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link active" th:href="@{/transactions/expenses}"><i class="bi bi-tags"></i> Kategorie wydatków</a>
+          <a class="nav-link active" th:href="@{/transactions/expenses}">
+            <i class="bi bi-tags"></i>
+            Kategorie wydatków
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfZNwpc6OoEzIs6RPB62agQJKu8xaHf6APlOYQkK06syFEvbA/viewform?usp=dialog"><i class="bi bi-question-circle"></i> Kontakt z pomocą techniczną</a>
+          <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfZNwpc6OoEzIs6RPB62agQJKu8xaHf6APlOYQkK06syFEvbA/viewform?usp=dialog">
+            <i class="bi bi-question-circle"></i>
+            Kontakt z pomocą techniczną
+          </a>
         </li>
       </ul>
       <div class="d-flex align-items-center">
@@ -33,7 +42,8 @@
         </span>
         <form th:action="@{/logout}" method="post">
           <button type="submit" class="btn btn-outline-light btn-sm">
-            <i class="bi bi-box-arrow-right"></i> Wyloguj
+            <i class="bi bi-box-arrow-right"></i>
+            Wyloguj
           </button>
         </form>
       </div>
@@ -43,7 +53,7 @@
 <div class="container py-4">
   <div class="row mb-4">
     <div class="col">
-      <form class="d-flex align-items-center gap-2" method="get">
+      <form class="d-flex align-items-center gap-2" method="GET">
         <label>
           <select class="form-select" name="month" onchange="this.form.submit()">
             <option value="1" th:selected="${currentMonth.monthValue == 1}">Styczeń</option>
@@ -62,11 +72,7 @@
         </label>
         <label>
           <select class="form-select" name="year" onchange="this.form.submit()">
-            <option th:each="year : ${#numbers.sequence(2024, #dates.year(#dates.createNow()))}"
-                    th:value="${year}"
-                    th:text="${year}"
-                    th:selected="${currentMonth.year == year}">
-            </option>
+            <option th:each="year : ${#numbers.sequence(2024, #dates.year(#dates.createNow()))}" th:value="${year}" th:text="${year}" th:selected="${currentMonth.year == year}"></option>
           </select>
         </label>
       </form>
@@ -78,8 +84,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-basket3-fill text-success"></i> Jedzenie
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Jedzenie', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-basket3-fill text-success"></i>
+              Jedzenie
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Jedzenie', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Jedzenie', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -94,11 +101,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Jedzenie'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -139,8 +146,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-backpack3-fill text-info"></i> Podróże
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Podróże', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-backpack3-fill text-info"></i>
+              Podróże
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Podróże', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Podróże', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -155,11 +163,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Podróże'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -200,8 +208,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-heart-pulse-fill text-danger"></i> Zdrowie
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Zdrowie', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-heart-pulse-fill text-danger"></i>
+              Zdrowie
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Zdrowie', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Zdrowie', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -216,11 +225,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Zdrowie'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -261,8 +270,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-controller text-warning"></i> Rozrywka
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Rozrywka', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-controller text-warning"></i>
+              Rozrywka
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Rozrywka', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Rozrywka', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -277,11 +287,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Rozrywka'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -322,8 +332,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-house-fill text-primary"></i> Dom
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Dom', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-house-fill text-primary"></i>
+              Dom
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Dom', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Dom', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -338,11 +349,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Dom'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -383,8 +394,9 @@
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="card-title mb-0">
-              <i class="bi bi-three-dots text-secondary"></i> Inne
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Inne', 0.0)/currentMonthExpenses)*100, 1, 1) + '%)'}" th:if="${currentMonthExpenses>0}">0%</span>
+              <i class="bi bi-three-dots text-secondary"></i>
+              Inne
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('Inne', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
             </h5>
             <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('Inne', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
           </div>
@@ -399,11 +411,11 @@
               </thead>
               <tbody>
               <tr th:each="expense : ${allExpenses}" th:if="${expense.category == 'Inne'}">
-                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                <td th:text="${expense.description}">Opis</td>
+                <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                <td th:text="${expense.description}"></td>
                 <td>
                   <div class="d-flex justify-content-between align-items-center">
-                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">0.00 PLN</span>
+                    <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                     <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                             class="btn btn-sm"
                             th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -411,11 +423,11 @@
                       <i class="bi bi-x-square"></i>
                     </button>
                   </div>
-                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteExpenseModalLabel" aria-hidden="true">
+                  <div class="modal fade" th:id="${'deleteExpenseModal-' + expense.id}" tabindex="-1" aria-labelledby="deleteOtherExpenseModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="deleteExpenseModalLabel">Usuwanie wydatku</h5>
+                          <h5 class="modal-title" id="deleteOtherExpenseModalLabel">Usuwanie wydatku</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
