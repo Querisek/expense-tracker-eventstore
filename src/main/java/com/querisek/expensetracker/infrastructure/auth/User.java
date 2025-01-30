@@ -17,7 +17,7 @@ public class User {
     private String email;
 
     @NotBlank(message = "Hasło nie może być puste.")
-    @Size(min = 8, max = 60, message = "Hasło nie zawiera minimalnej ilości znaków.")
+    @Size(min = 8, max = 60, message = "Długość hasła musi być w zakresie od 8 do 60 znaków.")
     private String password;
 
     public User() {}

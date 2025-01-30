@@ -22,12 +22,12 @@
           <form autocomplete="off" th:action="@{/register}" method="POST" th:object="${user}">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" th:field="*{email}" required>
+              <input type="email" class="form-control" id="email" name="email" required>
               <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Hasło</label>
-              <input type="password" class="form-control" id="password" th:field="*{password}" required>
+              <input type="password" class="form-control" id="password" name="password" required>
               <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
               <small class="form-text text-muted">Hasło musi zawierać co najmniej 8 znaków.</small>
             </div>
