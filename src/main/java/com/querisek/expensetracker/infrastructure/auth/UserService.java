@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
     public boolean changeUsersPassword(String email, String currentPassword, String newPassword) {
         User user = userRepository.findByEmail(email);
         if(user != null && passwordEncoder.matches(currentPassword, user.getPassword())) {
-            if(newPassword.length() >= 8) {
+            if(newPassword.length() >= 8 && newPassword.length() <= 60) {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userRepository.save(user);
                 return true;

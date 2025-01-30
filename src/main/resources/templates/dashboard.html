@@ -17,13 +17,22 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/transactions/summary}"><i class="bi bi-house-fill"></i> Podsumowanie finansów</a>
+          <a class="nav-link" th:href="@{/transactions/summary}">
+            <i class="bi bi-house-fill"></i>
+            Podsumowanie finansów
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" th:href="@{/transactions/expenses}"><i class="bi bi-tags"></i> Kategorie wydatków</a>
+          <a class="nav-link" th:href="@{/transactions/expenses}">
+            <i class="bi bi-tags"></i>
+            Kategorie wydatków
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfZNwpc6OoEzIs6RPB62agQJKu8xaHf6APlOYQkK06syFEvbA/viewform?usp=dialog"><i class="bi bi-question-circle"></i> Kontakt z pomocą techniczną</a>
+          <a class="nav-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfZNwpc6OoEzIs6RPB62agQJKu8xaHf6APlOYQkK06syFEvbA/viewform?usp=dialog">
+            <i class="bi bi-question-circle"></i>
+            Kontakt z pomocą techniczną
+          </a>
         </li>
       </ul>
       <div class="d-flex align-items-center">
@@ -33,7 +42,8 @@
         </span>
         <form th:action="@{/logout}" method="post">
           <button type="submit" class="btn btn-outline-light btn-sm">
-            <i class="bi bi-box-arrow-right"></i> Wyloguj
+            <i class="bi bi-box-arrow-right"></i>
+            Wyloguj
           </button>
         </form>
       </div>
@@ -56,31 +66,31 @@
         </form>
       </div>
       <div th:if="${param.wrongPassword}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        Podano złe hasło lub nowe hasło zawiera mniej niż 8 znaków.
+        Podano złe hasło lub nowe hasło nie mieści się w zakresie od 8 do 60 znaków.
         <form th:action="@{/}" method="GET">
           <button type="submit" class="btn-close" aria-label="Close"></button>
         </form>
       </div>
       <div th:if="${param.categoryInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${param.categoryInvalid[0]}"></span>
+        <span th:text="${param.categoryInvalid}"></span>
         <form th:action="@{/}" method="GET">
           <button type="submit" class="btn-close" aria-label="Close"></button>
         </form>
       </div>
       <div th:if="${param.descriptionInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${param.descriptionInvalid[0]}"></span>
+        <span th:text="${param.descriptionInvalid}"></span>
         <form th:action="@{/}" method="GET">
           <button type="submit" class="btn-close" aria-label="Close"></button>
         </form>
       </div>
       <div th:if="${param.priceInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${param.priceInvalid[0]}"></span>
+        <span th:text="${param.priceInvalid}"></span>
         <form th:action="@{/}" method="GET">
           <button type="submit" class="btn-close" aria-label="Close"></button>
         </form>
       </div>
       <div th:if="${param.dateInvalid}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${param.dateInvalid[0]}"></span>
+        <span th:text="${param.dateInvalid}"></span>
         <form th:action="@{/}" method="GET">
           <button type="submit" class="btn-close" aria-label="Close"></button>
         </form>
@@ -132,21 +142,21 @@
                   <form th:action="@{/}" method="GET" class="d-flex align-items-center">
                     <input type="hidden" name="date" th:value="${#temporals.format(selectedDate, 'yyyy-MM-dd')}">
                     <div class="btn-group" role="group">
-                      <input type="radio" class="btn-check" name="type" id="expenses" value="expenses"
-                             th:checked="${param.type == null || param.type[0] == 'expenses'}" onchange="this.form.submit()" autocomplete="off">
+                      <input type="radio" class="btn-check" name="type" id="expenses" value="expenses" th:checked="${param.type == null || param.type[0] == 'expenses'}" onchange="this.form.submit()" autocomplete="off">
                       <label class="btn btn-outline-primary btn-sm" for="expenses">Wydatki</label>
-                      <input type="radio" class="btn-check" name="type" id="income" value="income"
-                             th:checked="${param.type != null && param.type[0] == 'income'}" onchange="this.form.submit()" autocomplete="off">
+                      <input type="radio" class="btn-check" name="type" id="income" value="income" th:checked="${param.type != null && param.type[0] == 'income'}" onchange="this.form.submit()" autocomplete="off">
                       <label class="btn btn-outline-primary btn-sm" for="income">Przychody</label>
                     </div>
                   </form>
                 </div>
                 <div class="d-flex gap-2">
                   <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addExpenseModal">
-                    <i class="bi bi-plus-lg"></i> Dodaj wydatek
+                    <i class="bi bi-plus-lg"></i>
+                    Dodaj wydatek
                   </button>
                   <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addIncomeModal">
-                    <i class="bi bi-plus-lg"></i> Dodaj przychód
+                    <i class="bi bi-plus-lg"></i>
+                    Dodaj przychód
                   </button>
                 </div>
               </div>
@@ -166,12 +176,12 @@
                       <td colspan="4" class="text-center">Brak wydatków</td>
                     </tr>
                     <tr th:each="expense : ${expensesByDay}">
-                      <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}">Data</td>
-                      <td th:text="${expense.category}">Kategoria</td>
-                      <td th:text="${expense.description}">Opis</td>
+                      <td th:text="${#temporals.format(expense.createdAt, 'dd-MM-yyyy')}"></td>
+                      <td th:text="${expense.category}"></td>
+                      <td th:text="${expense.description}"></td>
                       <td>
                         <div class="d-flex justify-content-between align-items-center">
-                          <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}">Kwota</span>
+                          <span th:text="${#numbers.formatDecimal(expense.price, 1, 2) + ' PLN'}"></span>
                           <button th:if="${#temporals.year(expense.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(expense.createdAt) == #dates.month(#dates.createNow())}"
                                   class="btn btn-sm"
                                   th:data-bs-target="${'#deleteExpenseModal-' + expense.id}"
@@ -207,12 +217,12 @@
                       <td colspan="4" class="text-center">Brak przychodów</td>
                     </tr>
                     <tr th:each="income : ${incomeByDay}">
-                      <td th:text="${#temporals.format(income.createdAt, 'dd-MM-yyyy')}">Data</td>
+                      <td th:text="${#temporals.format(income.createdAt, 'dd-MM-yyyy')}"></td>
                       <td>Przychód</td>
-                      <td th:text="${income.description}">Opis</td>
+                      <td th:text="${income.description}"></td>
                       <td>
                         <div class="d-flex justify-content-between align-items-center">
-                          <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}">Kwota</span>
+                          <span th:text="${#numbers.formatDecimal(income.price, 1, 2) + ' PLN'}"></span>
                           <button th:if="${#temporals.year(income.createdAt) == #dates.year(#dates.createNow()) && #temporals.month(income.createdAt) == #dates.month(#dates.createNow())}"
                                   class="btn btn-sm"
                                   th:data-bs-target="${'#deleteIncomeModal-' + income.id}"
@@ -263,84 +273,90 @@
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Jedzenie</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Jedzenie', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Jedzenie', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Jedzenie', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-success" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Jedzenie', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Jedzenie', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Jedzenie', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Jedzenie', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
             <div class="mb-2">
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Podróże</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Podróże', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Podróże', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Podróże', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-info" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Podróże', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Podróże', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Podróże', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Podróże', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
             <div class="mb-2">
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Zdrowie</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Zdrowie', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Zdrowie', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Zdrowie', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-danger" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Zdrowie', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Zdrowie', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Zdrowie', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Zdrowie', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
             <div class="mb-2">
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Rozrywka</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Rozrywka', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Rozrywka', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Rozrywka', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-warning" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Rozrywka', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Rozrywka', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Rozrywka', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Rozrywka', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
             <div class="mb-2">
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Dom</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Dom', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Dom', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Dom', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-primary" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Dom', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Dom', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Dom', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Dom', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
             <div class="mb-2">
               <div class="d-flex justify-content-between">
                 <div>
                   <small>Inne</small>
-                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Inne', 0.0)/totalExpenses)*100, 1, 1) + '%)'}" th:if="${totalExpenses>0}">0%</small>
+                  <small th:text="${'(' + #numbers.formatDecimal((expensesByCategory.getOrDefault('Inne', 0.0) / totalExpenses) * 100, 1, 1) + '%)'}" th:if="${totalExpenses > 0.0}">0%</small>
                 </div>
                 <small th:text="${#numbers.formatDecimal(expensesByCategory.getOrDefault('Inne', 0.0), 1, 2) + ' PLN'}">0.00 PLN</small>
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-secondary" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Inne', 0.0)/totalExpenses)*100, 1, 1)) + '%'}"
-                     th:aria-valuenow="${expensesByCategory.getOrDefault('Inne', 0.0)}" aria-valuemin="0" th:aria-valuemax="${totalExpenses}"></div>
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('Inne', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:aria-valuenow="${expensesByCategory.getOrDefault('Inne', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
+                </div>
               </div>
             </div>
           </div>
