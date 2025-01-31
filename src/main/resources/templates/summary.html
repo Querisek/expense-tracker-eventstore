@@ -266,7 +266,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-success" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('food', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('food', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('food', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
@@ -281,7 +281,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-info" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('travel', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('travel', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('travel', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
@@ -296,7 +296,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-danger" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('health', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('health', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('health', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
@@ -311,7 +311,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-warning" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('entertainment', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('entertainment', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('entertainment', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
@@ -326,7 +326,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-primary" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('home', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('home', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('home', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
@@ -341,7 +341,7 @@
               </div>
               <div class="progress" style="height: 10px;">
                 <div class="progress-bar bg-secondary" role="progressbar"
-                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('other', 0.0) / totalExpenses) * 100, 1, 1)) + '%'}"
+                     th:style="${'width: ' + (#numbers.formatDecimal((expensesByCategory.getOrDefault('other', 0.0) / totalExpenses) * 100, 1, 0)) + '%'}"
                      th:aria-valuenow="${expensesByCategory.getOrDefault('other', 0.0)}" aria-valuemin="0.0" th:aria-valuemax="${totalExpenses}">
                 </div>
               </div>
