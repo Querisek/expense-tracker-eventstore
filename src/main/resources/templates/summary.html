@@ -138,8 +138,8 @@
                 <input type="radio" class="btn-check" name="type" id="income" value="income" th:checked="${param.type != null && param.type[0] == 'income'}" onchange="this.form.submit()" autocomplete="off">
                 <label class="btn btn-outline-primary btn-sm" for="income">Przychody</label>
               </div>
-              <input type="hidden" name="year" th:value="${param.year}">
               <input type="hidden" name="month" th:value="${param.month}">
+              <input type="hidden" name="year" th:value="${param.year}">
             </form>
           </div>
           <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
