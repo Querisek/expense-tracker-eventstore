@@ -86,9 +86,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-basket3-fill text-success"></i>
               Jedzenie
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('food', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('food', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('food', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('food', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
@@ -148,9 +149,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-backpack3-fill text-info"></i>
               Podróże
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('travel', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('travel', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('travel', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('travel', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
@@ -210,9 +212,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-heart-pulse-fill text-danger"></i>
               Zdrowie
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('health', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('health', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('health', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('health', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
@@ -272,9 +275,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-controller text-warning"></i>
               Rozrywka
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('entertainment', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('entertainment', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('entertainment', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('entertainment', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
@@ -334,9 +338,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-house-fill text-primary"></i>
               Dom
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('home', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('home', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('home', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('home', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
@@ -396,9 +401,10 @@
             <h5 class="card-title mb-0">
               <i class="bi bi-three-dots text-secondary"></i>
               Inne
-              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('other', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}" th:if="${currentMonthExpenses > 0.0}">0%</span>
+              <span th:text="${'(' + #numbers.formatDecimal((currentMonthExpensesByCategory.getOrDefault('other', 0.0) / currentMonthExpenses) * 100, 1, 1) + '%)'}"
+                    th:if="${currentMonthExpenses > 0.0}"></span>
             </h5>
-            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('other', 0.0), 1, 2) + ' PLN'}">0.00 PLN</h4>
+            <h4 class="mb-0" th:text="${#numbers.formatDecimal(currentMonthExpensesByCategory.getOrDefault('other', 0.0), 1, 2) + ' PLN'}"></h4>
           </div>
           <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
             <table class="table table-hover">
